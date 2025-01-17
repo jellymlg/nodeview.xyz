@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
 
-export type Block = {
+export interface Block {
   id: string
   height: number
   time: string
