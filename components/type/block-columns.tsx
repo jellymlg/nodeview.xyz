@@ -23,6 +23,9 @@ export const BlockColumns: ColumnDef<Block>[] = [
   },
   {
     accessorKey: "size",
-    header: "Size"
+    header: "Size",
+    cell: ({row}) => {
+      return row.getValue("size") + " kB"
+    }
   }
 ]

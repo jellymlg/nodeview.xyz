@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function Navbar() {
     return (
-        <NavigationMenu>
+        <NavigationMenu className="max-w-screen-xl flex flex-wrap items-center justify-center mx-auto p-4">
             <NavigationMenuList>
                 <NavigationMenuItem>
                     <Link href="/" legacyBehavior passHref>
