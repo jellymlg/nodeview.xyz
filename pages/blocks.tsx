@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/ui/data-table";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { BlockHeader, ErgoApi, FullBlock } from "@/lib/ergo-api";
+import { ErgoApi, FullBlock } from "@/lib/ergo-api";
 import { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
@@ -47,11 +47,11 @@ export const BlockColumns: ColumnDef<FullBlock>[] = [
     }
 ];
 
-export default function blocks() {
-    const api = new ErgoApi();
-    api.baseUrl = "http://213.239.193.208:9053";
+export default function Blocks() {
     const [blocks, setBlocks] = useState<FullBlock[]>([]);
     useEffect(() => {
+        const api = new ErgoApi();
+        api.baseUrl = "http://213.239.193.208:9053";
         const fun = async () => {
             api.blockchain.getIndexedHeight().then(resp => {
                 api.blocks.getHeaderIds({offset: resp.data.fullHeight as number - 29, limit: 30}).then(resp => {

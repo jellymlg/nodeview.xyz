@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-export default function index() {
+export default function Index() {
     return (
         <div>
             <p>Hello world</p>

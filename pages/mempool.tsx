@@ -79,11 +79,11 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
     }
 ];
 
-export default function mempool() {
-    const api = new ErgoApi();
-    api.baseUrl = "http://213.239.193.208:9053";
+export default function Mempool() {
     const [txs, setTxs] = useState<Transactions>([]);
     useEffect(() => {
+        const api = new ErgoApi();
+        api.baseUrl = "http://213.239.193.208:9053";
         const fun = async () => {
             api.transactions.getUnconfirmedTransactions({limit: 200}).then(resp => setTxs(resp.data));
         };
