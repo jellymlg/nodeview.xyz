@@ -1,84 +1,68 @@
-import { Block, BlockColumns } from "@/components/type/block-columns";
 import { DataTable } from "@/components/ui/data-table";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { BlockHeader, ErgoApi, FullBlock } from "@/lib/ergo-api";
+import { ColumnDef } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
 
-function getBlocks(): Block[] {
-    return [
-        {
-            id: "980b23929027b36596950327b4d8bc65c5cb5a7003e07b19ffa2c0cc24334b16",
-            height: 1441381,
-            time: "17.01.2025 16:52:48",
-            txs: 15,
-            size: 122.61
+export const BlockColumns: ColumnDef<FullBlock>[] = [
+    {
+        accessorFn: (row) => {
+            return row.header.height
         },
-        {
-            id: "be7e01a953c9ee4441e448fce94bc6288f1ccd8e4b19c2d3e5d753dce6eb149b",
-            height: 1441380,
-            time: "17.01.2025 16:52:36",
-            txs: 4,
-            size: 13.16
+        header: "Height"
+    },
+    {
+        accessorFn: (row) => {
+            return row.header.id
         },
-        {
-            id: "980b23929027b36596950327b4d8bc65c5cb5a7003e07b19ffa2c0cc24334b16",
-            height: 1441381,
-            time: "17.01.2025 16:52:48",
-            txs: 15,
-            size: 122.61
+        header: "Hash"
+    },
+    {
+        accessorFn: (row) => {
+            return row.header.timestamp
         },
-        {
-            id: "be7e01a953c9ee4441e448fce94bc6288f1ccd8e4b19c2d3e5d753dce6eb149b",
-            height: 1441380,
-            time: "17.01.2025 16:52:36",
-            txs: 4,
-            size: 13.16
+        header: "Timestamp",
+        cell: ({row}) => {
+            return new Date(row.original.header.timestamp).toISOString()
+        }
+    },
+    {
+        accessorFn: (row) => {
+            return row.blockTransactions.transactions.length
         },
-        {
-            id: "980b23929027b36596950327b4d8bc65c5cb5a7003e07b19ffa2c0cc24334b16",
-            height: 1441381,
-            time: "17.01.2025 16:52:48",
-            txs: 15,
-            size: 122.61
+        header: "Transactions"
+    },
+    {
+        accessorFn: (row) => {
+            return row.header.difficulty
         },
-        {
-            id: "be7e01a953c9ee4441e448fce94bc6288f1ccd8e4b19c2d3e5d753dce6eb149b",
-            height: 1441380,
-            time: "17.01.2025 16:52:36",
-            txs: 4,
-            size: 13.16
-        },
-        {
-            id: "980b23929027b36596950327b4d8bc65c5cb5a7003e07b19ffa2c0cc24334b16",
-            height: 1441381,
-            time: "17.01.2025 16:52:48",
-            txs: 15,
-            size: 122.61
-        },
-        {
-            id: "be7e01a953c9ee4441e448fce94bc6288f1ccd8e4b19c2d3e5d753dce6eb149b",
-            height: 1441380,
-            time: "17.01.2025 16:52:36",
-            txs: 4,
-            size: 13.16
-        },
-        {
-            id: "980b23929027b36596950327b4d8bc65c5cb5a7003e07b19ffa2c0cc24334b16",
-            height: 1441381,
-            time: "17.01.2025 16:52:48",
-            txs: 15,
-            size: 122.61
-        },
-        {
-            id: "be7e01a953c9ee4441e448fce94bc6288f1ccd8e4b19c2d3e5d753dce6eb149b",
-            height: 1441380,
-            time: "17.01.2025 16:52:36",
-            txs: 4,
-            size: 13.16
-        },
-    ];
-}
+        header: "Difficulty"
+    },
+    {
+        accessorKey: "size",
+        header: "Size",
+        cell: ({row}) => {
+            return row.original.size / 1000 + " kB"
+        }
+    }
+];
 
 export default function blocks() {
-    const blocks = getBlocks();
+    const api = new ErgoApi();
+    api.baseUrl = "http://213.239.193.208:9053";
+    const [blocks, setBlocks] = useState<FullBlock[]>([]);
+    useEffect(() => {
+        const fun = async () => {
+            api.blockchain.getIndexedHeight().then(resp => {
+                api.blocks.getHeaderIds({offset: resp.data.fullHeight as number - 29, limit: 30}).then(resp => {
+                    api.blocks.getFullBlockByIds(resp.data.reverse()).then(resp => setBlocks(resp.data))
+                })
+            })
+        };
+        fun();
+        const interval = setInterval(fun, 30000);
+        return () => clearInterval(interval);
+    }, []);
     return (
         <div className="flex flex-wrap justify-center">
             <DataTable columns={BlockColumns} data={blocks}></DataTable>
