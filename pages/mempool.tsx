@@ -2,7 +2,6 @@ import { DataTable } from "@/components/ui/data-table";
 import {
   ErgoApi,
   ErgoTransaction,
-  ErgoTransactionInput,
   ErgoTransactionOutput,
   Transactions,
 } from "../lib/ergo-api";
@@ -25,11 +24,11 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
           className="text-primary underline"
           href={
             "https://explorer.ergoplatform.com/en/transactions/" +
-            row.getValue<string>("id")
+            row.original.id
           }
           target="_blank"
         >
-          {row.getValue<string>("id")}
+          {row.original.id}
         </Link>
       );
     },
@@ -38,14 +37,14 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
     accessorKey: "inputs",
     header: "Inputs",
     cell: ({ row }) => {
-      return row.getValue<ErgoTransactionInput[]>("inputs").length;
+      return row.original.inputs.length;
     },
   },
   {
     accessorKey: "outputs",
     header: "Outputs",
     cell: ({ row }) => {
-      return row.getValue<ErgoTransactionOutput[]>("outputs").length;
+      return row.original.outputs.length;
     },
   },
   {
@@ -63,11 +62,11 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
       );
     },
     cell: ({ row }) => {
-      return row.getValue<number>("size") / 1000 + " kB";
+      return (row.original.size as number) / 1000 + " kB";
     },
     sortingFn: (rowA, rowB) => {
-      const a = rowA.getValue<number>("size");
-      const b = rowB.getValue<number>("size");
+      const a = rowA.original.size as number;
+      const b = rowB.original.size as number;
       return a > b ? 1 : a < b ? -1 : 0;
     },
   },

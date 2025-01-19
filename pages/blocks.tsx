@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/pagination";
 import { ErgoApi, FullBlock } from "@/lib/ergo-api";
 import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export const BlockColumns: ColumnDef<FullBlock>[] = [
@@ -24,6 +25,20 @@ export const BlockColumns: ColumnDef<FullBlock>[] = [
       return row.header.id;
     },
     header: "Hash",
+    cell: ({ row }) => {
+      return (
+        <Link
+          className="text-primary underline"
+          href={
+            "https://explorer.ergoplatform.com/en/blocks/" +
+            row.original.header.id
+          }
+          target="_blank"
+        >
+          {row.original.header.id}
+        </Link>
+      );
+    },
   },
   {
     accessorFn: (row) => {
@@ -31,7 +46,7 @@ export const BlockColumns: ColumnDef<FullBlock>[] = [
     },
     header: "Timestamp",
     cell: ({ row }) => {
-      return new Date(row.original.header.timestamp).toISOString();
+      return new Date(row.original.header.timestamp).toLocaleString();
     },
   },
   {
