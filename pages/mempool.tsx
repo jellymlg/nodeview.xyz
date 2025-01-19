@@ -5,14 +5,37 @@ import {
   ErgoTransactionOutput,
   Transactions,
 } from "../lib/ergo-api";
-import { ColumnDef } from "@tanstack/react-table";
+import { Column, ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import Link from "next/link";
 
 const feeTree: string =
   "1005040004000e36100204a00b08cd0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798ea02d192a39a8cc7a701730073011001020402d19683030193a38cc7b2a57300000193c2b2a57301007473027303830108cdeeac93b1a57304";
+
+const feeFromTx: (tx: ErgoTransaction) => number = (tx: ErgoTransaction) =>
+  (tx.outputs.find((b) => b.ergoTree == feeTree) as ErgoTransactionOutput)
+    .value;
+
+function SortButton<TColumn>(column: Column<TColumn>, text: string) {
+  return (
+    <Button
+      className="font-bold text-foreground"
+      variant="ghost"
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    >
+      {text}
+      {column.getIsSorted() === false ? (
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      ) : column.getIsSorted() === "asc" ? (
+        <ArrowUp className="ml-2 h-4 w-4" />
+      ) : (
+        <ArrowDown className="ml-2 h-4 w-4" />
+      )}
+    </Button>
+  );
+}
 
 export const TxColumns: ColumnDef<ErgoTransaction>[] = [
   {
@@ -35,32 +58,21 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
   },
   {
     accessorKey: "inputs",
-    header: "Inputs",
+    header: ({ column }) => SortButton(column, "Inputs"),
     cell: ({ row }) => {
       return row.original.inputs.length;
     },
   },
   {
     accessorKey: "outputs",
-    header: "Outputs",
+    header: ({ column }) => SortButton(column, "Outputs"),
     cell: ({ row }) => {
       return row.original.outputs.length;
     },
   },
   {
     accessorKey: "size",
-    header: ({ column }) => {
-      return (
-        <Button
-          className="font-bold text-foreground"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Size
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: ({ column }) => SortButton(column, "Size"),
     cell: ({ row }) => {
       return (row.original.size as number) / 1000 + " kB";
     },
@@ -72,38 +84,35 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
   },
   {
     id: "fee",
-    accessorFn: (row) => {
-      return (
-        row.outputs.find((b) => b.ergoTree == feeTree) as ErgoTransactionOutput
-      ).value;
-    },
-    header: ({ column }) => {
-      return (
-        <Button
-          className="font-bold text-foreground"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Fee
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    accessorFn: feeFromTx,
+    header: ({ column }) => SortButton(column, "Fee"),
     cell: ({ row }) => {
-      const feeBox = row.original.outputs.find(
-        (b) => b.ergoTree == feeTree,
-      ) as ErgoTransactionOutput;
-      return feeBox.value / 1_000_000_000 + " ERG";
+      return feeFromTx(row.original) / 1_000_000_000 + " ERG";
     },
     sortingFn: (rowA, rowB) => {
-      const feeBoxA = rowA.original.outputs.find(
-        (b) => b.ergoTree == feeTree,
-      ) as ErgoTransactionOutput;
-      const feeBoxB = rowB.original.outputs.find(
-        (b) => b.ergoTree == feeTree,
-      ) as ErgoTransactionOutput;
-      const a = feeBoxA.value,
-        b = feeBoxB.value;
+      const a = feeFromTx(rowA.original),
+        b = feeFromTx(rowB.original);
+      return a > b ? 1 : a < b ? -1 : 0;
+    },
+  },
+  {
+    id: "feePerByte",
+    header: ({ column }) => SortButton(column, "Fee Per Byte"),
+    accessorFn: (row) => {
+      return feeFromTx(row) / (row.size as number);
+    },
+    cell: ({ row }) => {
+      return (
+        (
+          feeFromTx(row.original) /
+          (row.original.size as number) /
+          1_000_000_000
+        ).toFixed(9) + " ERG"
+      );
+    },
+    sortingFn: (rowA, rowB) => {
+      const a = feeFromTx(rowA.original) / (rowA.original.size as number),
+        b = feeFromTx(rowB.original) / (rowB.original.size as number);
       return a > b ? 1 : a < b ? -1 : 0;
     },
   },
