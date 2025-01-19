@@ -29,11 +29,7 @@ export const BlockColumns: ColumnDef<FullBlock>[] = [
       return (
         <Link
           className="text-primary underline"
-          href={
-            "https://explorer.ergoplatform.com/en/blocks/" +
-            row.original.header.id
-          }
-          target="_blank"
+          href={"block/" + row.original.header.id}
         >
           {row.original.header.id}
         </Link>

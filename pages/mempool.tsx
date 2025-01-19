@@ -45,11 +45,7 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
       return (
         <Link
           className="text-primary underline"
-          href={
-            "https://explorer.ergoplatform.com/en/transactions/" +
-            row.original.id
-          }
-          target="_blank"
+          href={"transaction/" + row.original.id}
         >
           {row.original.id}
         </Link>
