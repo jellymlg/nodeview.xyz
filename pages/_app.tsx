@@ -5,20 +5,20 @@ import { AppProps } from "next/app";
 import { Navbar } from "@/components/ui/navbar";
 
 export const metadata: Metadata = {
-    title: "ergoplatform.space",
-    description: "Ergo blockchain explorer",
+  title: "ergoplatform.space",
+  description: "Ergo blockchain explorer",
 };
 
 export default function App({ Component, pageProps }: AppProps) {
-    return (
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Navbar />
-            <Component {...pageProps} />
-        </ThemeProvider>
-    );
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <Navbar />
+      <Component {...pageProps} />
+    </ThemeProvider>
+  );
 }
