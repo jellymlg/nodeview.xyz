@@ -68,17 +68,17 @@ export const BlockColumns: ColumnDef<FullBlock>[] = [
 ];
 
 export default function Blocks() {
-  const pageNum: number = parseInt(useRouter().query.page as string);
+  const num: number = parseInt(useRouter().query.num as string);
   const [blocks, setBlocks] = useState<FullBlock[]>([]);
   useEffect(() => {
-    if (!pageNum) return;
+    if (!num) return;
     const api = new ErgoApi();
     api.baseUrl = "http://213.239.193.208:9053";
     const fun = async () => {
       api.blockchain.getIndexedHeight().then((resp) => {
         const off = Math.max(
           0,
-          (resp.data.fullHeight as number) - 30 * (pageNum - 1) - 29,
+          (resp.data.fullHeight as number) - 30 * (num - 1) - 29,
         );
         api.blocks
           .getHeaderIds({
@@ -95,40 +95,40 @@ export default function Blocks() {
     fun();
     const interval = setInterval(fun, 30000);
     return () => clearInterval(interval);
-  }, [pageNum]);
+  }, [num]);
   return (
     <div className="flex flex-wrap justify-center">
       <DataTable columns={BlockColumns} data={blocks}></DataTable>
       {blocks.length > 0 && (
         <Pagination>
           <PaginationContent>
-            {pageNum > 1 && (
+            {num > 1 && (
               <div className="flex">
                 <PaginationItem>
-                  <PaginationPrevious href={"/blocks/" + (pageNum - 1)} />
+                  <PaginationPrevious href={"/blocks/" + (num - 1)} />
                 </PaginationItem>
-                {pageNum > 2 && (
+                {num > 2 && (
                   <PaginationItem>
                     <PaginationEllipsis />
                   </PaginationItem>
                 )}
                 <PaginationItem>
-                  <PaginationLink href={"/blocks/" + (pageNum - 1)}>
-                    {pageNum - 1}
+                  <PaginationLink href={"/blocks/" + (num - 1)}>
+                    {num - 1}
                   </PaginationLink>
                 </PaginationItem>
               </div>
             )}
             <PaginationItem>
-              <PaginationLink href={"/blocks/" + pageNum} isActive>
-                {pageNum}
+              <PaginationLink href={"/blocks/" + num} isActive>
+                {num}
               </PaginationLink>
             </PaginationItem>
             {blocks[blocks.length - 1].header.height > 1 && (
               <div className="flex">
                 <PaginationItem>
-                  <PaginationLink href={"/blocks/" + (pageNum + 1)}>
-                    {pageNum + 1}
+                  <PaginationLink href={"/blocks/" + (num + 1)}>
+                    {num + 1}
                   </PaginationLink>
                 </PaginationItem>
                 {blocks[blocks.length - 1].header.height >= 30 && (
@@ -137,7 +137,7 @@ export default function Blocks() {
                   </PaginationItem>
                 )}
                 <PaginationItem>
-                  <PaginationNext href={"/blocks/" + (pageNum + 1)} />
+                  <PaginationNext href={"/blocks/" + (num + 1)} />
                 </PaginationItem>
               </div>
             )}
