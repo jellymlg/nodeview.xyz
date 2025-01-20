@@ -19,7 +19,7 @@ export function Navbar() {
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/blocks" legacyBehavior passHref>
+          <Link href="/blocks/1" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Blocks
             </NavigationMenuLink>
