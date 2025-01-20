@@ -22,7 +22,7 @@ export default function Transaction() {
           setTimeout(fun, 5000);
         },
         async () =>
-          await api.blockchain.getTxById(id).then((resp) => setTx(resp.data))
+          await api.blockchain.getTxById(id).then((resp) => setTx(resp.data)),
       );
     };
     fun();

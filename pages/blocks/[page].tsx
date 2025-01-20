@@ -71,12 +71,15 @@ export default function Blocks() {
   const pageNum: number = parseInt(useRouter().query.page as string);
   const [blocks, setBlocks] = useState<FullBlock[]>([]);
   useEffect(() => {
-    if(!pageNum) return;
+    if (!pageNum) return;
     const api = new ErgoApi();
     api.baseUrl = "http://213.239.193.208:9053";
     const fun = async () => {
       api.blockchain.getIndexedHeight().then((resp) => {
-        const off = Math.max(0, (resp.data.fullHeight as number) - (30 * (pageNum - 1)) - 29)
+        const off = Math.max(
+          0,
+          (resp.data.fullHeight as number) - 30 * (pageNum - 1) - 29,
+        );
         api.blocks
           .getHeaderIds({
             offset: off,
@@ -96,56 +99,51 @@ export default function Blocks() {
   return (
     <div className="flex flex-wrap justify-center">
       <DataTable columns={BlockColumns} data={blocks}></DataTable>
-      {
-        blocks.length > 0 && (
-          <Pagination>
-            <PaginationContent>
-              {
-                (pageNum > 1) && (
-                  <div className="flex">
-                    <PaginationItem>
-                      <PaginationPrevious href={"/blocks/" + (pageNum - 1)}/>
-                    </PaginationItem>
-                    {
-                      (pageNum > 2) && (
-                        <PaginationItem>
-                          <PaginationEllipsis />
-                        </PaginationItem>
-                      )
-                    }
-                    <PaginationItem>
-                      <PaginationLink href={"/blocks/" + (pageNum - 1)}>{pageNum - 1}</PaginationLink>
-                    </PaginationItem>
-                  </div>
-                )
-              }
-              <PaginationItem>
-                <PaginationLink href={"/blocks/" + pageNum} isActive>{pageNum}</PaginationLink>
-              </PaginationItem>
-              {
-                (blocks[blocks.length - 1].header.height > 1) && (
-                  <div className="flex">
-                    <PaginationItem>
-                      <PaginationLink href={"/blocks/" + (pageNum + 1)}>{pageNum + 1}</PaginationLink>
-                    </PaginationItem>
-                    {
-                      (blocks[blocks.length - 1].header.height >= 30) && (
-                        <PaginationItem>
-                          <PaginationEllipsis />
-                        </PaginationItem>
-                      )
-                    }
-                    <PaginationItem>
-                      <PaginationNext href={"/blocks/" + (pageNum + 1)} />
-                    </PaginationItem>
-                  </div>
-                )
-              }
-            </PaginationContent>
-          </Pagination>
-        )
-      }
-
+      {blocks.length > 0 && (
+        <Pagination>
+          <PaginationContent>
+            {pageNum > 1 && (
+              <div className="flex">
+                <PaginationItem>
+                  <PaginationPrevious href={"/blocks/" + (pageNum - 1)} />
+                </PaginationItem>
+                {pageNum > 2 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+                <PaginationItem>
+                  <PaginationLink href={"/blocks/" + (pageNum - 1)}>
+                    {pageNum - 1}
+                  </PaginationLink>
+                </PaginationItem>
+              </div>
+            )}
+            <PaginationItem>
+              <PaginationLink href={"/blocks/" + pageNum} isActive>
+                {pageNum}
+              </PaginationLink>
+            </PaginationItem>
+            {blocks[blocks.length - 1].header.height > 1 && (
+              <div className="flex">
+                <PaginationItem>
+                  <PaginationLink href={"/blocks/" + (pageNum + 1)}>
+                    {pageNum + 1}
+                  </PaginationLink>
+                </PaginationItem>
+                {blocks[blocks.length - 1].header.height >= 30 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+                <PaginationItem>
+                  <PaginationNext href={"/blocks/" + (pageNum + 1)} />
+                </PaginationItem>
+              </div>
+            )}
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 }
