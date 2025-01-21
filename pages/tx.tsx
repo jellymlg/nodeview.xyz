@@ -3,6 +3,7 @@ import {
   ErgoTransaction,
   IndexedErgoTransaction,
 } from "@/lib/ergo-api";
+import { ErgoAddress } from "@fleet-sdk/core";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -35,6 +36,13 @@ export default function Transaction() {
         <p>
           Found {"index" in tx ? "confirmed" : "unconfirmed"} tx with id {tx.id}
         </p>
+        {"index" in tx
+          ? (tx as IndexedErgoTransaction).outputs.map((box) => (
+              <p key={box.boxId}>{box.address}</p>
+            ))
+          : (tx as ErgoTransaction).outputs
+              .map((box) => ErgoAddress.fromErgoTree(box.ergoTree).toString())
+              .map((x) => <p key={x}>{x}</p>)}
       </div>
     );
   }
