@@ -1,9 +1,9 @@
 import { ErgoApi, FullBlock } from "@/lib/ergo-api";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Block() {
-  const id: string = useRouter().query.id as string;
+  const id: string = useSearchParams().get("id") as string;
   const [block, setBlock] = useState<FullBlock | undefined>();
   useEffect(() => {
     if (!id || id.length != 64) return;

@@ -3,11 +3,11 @@ import {
   ErgoTransaction,
   IndexedErgoTransaction,
 } from "@/lib/ergo-api";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Transaction() {
-  const id: string = useRouter().query.id as string;
+  const id: string = useSearchParams().get("id") as string;
   const [tx, setTx] = useState<
     ErgoTransaction | IndexedErgoTransaction | undefined
   >();

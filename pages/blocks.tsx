@@ -11,7 +11,7 @@ import {
 import { ErgoApi, FullBlock } from "@/lib/ergo-api";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export const BlockColumns: ColumnDef<FullBlock>[] = [
@@ -30,7 +30,7 @@ export const BlockColumns: ColumnDef<FullBlock>[] = [
       return (
         <Link
           className="text-primary underline"
-          href={"../block/" + row.original.header.id}
+          href={"../block?id=" + row.original.header.id}
         >
           {row.original.header.id}
         </Link>
@@ -68,7 +68,7 @@ export const BlockColumns: ColumnDef<FullBlock>[] = [
 ];
 
 export default function Blocks() {
-  const num: number = parseInt(useRouter().query.num as string);
+  const num: number = parseInt(useSearchParams().get("page") as string);
   const [blocks, setBlocks] = useState<FullBlock[]>([]);
   useEffect(() => {
     if (!num) return;
@@ -105,7 +105,7 @@ export default function Blocks() {
             {num > 1 && (
               <div className="flex">
                 <PaginationItem>
-                  <PaginationPrevious href={"/blocks/" + (num - 1)} />
+                  <PaginationPrevious href={"/blocks?page=" + (num - 1)} />
                 </PaginationItem>
                 {num > 2 && (
                   <PaginationItem>
@@ -113,21 +113,21 @@ export default function Blocks() {
                   </PaginationItem>
                 )}
                 <PaginationItem>
-                  <PaginationLink href={"/blocks/" + (num - 1)}>
+                  <PaginationLink href={"/blocks?page=" + (num - 1)}>
                     {num - 1}
                   </PaginationLink>
                 </PaginationItem>
               </div>
             )}
             <PaginationItem>
-              <PaginationLink href={"/blocks/" + num} isActive>
+              <PaginationLink href={"/blocks?page=" + num} isActive>
                 {num}
               </PaginationLink>
             </PaginationItem>
             {blocks[blocks.length - 1].header.height > 1 && (
               <div className="flex">
                 <PaginationItem>
-                  <PaginationLink href={"/blocks/" + (num + 1)}>
+                  <PaginationLink href={"/blocks?page=" + (num + 1)}>
                     {num + 1}
                   </PaginationLink>
                 </PaginationItem>
@@ -137,7 +137,7 @@ export default function Blocks() {
                   </PaginationItem>
                 )}
                 <PaginationItem>
-                  <PaginationNext href={"/blocks/" + (num + 1)} />
+                  <PaginationNext href={"/blocks?page=" + (num + 1)} />
                 </PaginationItem>
               </div>
             )}

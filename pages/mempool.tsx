@@ -45,7 +45,7 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
       return (
         <Link
           className="text-primary underline"
-          href={"transaction/" + row.original.id}
+          href={"tx?id=" + row.original.id}
         >
           {row.original.id}
         </Link>
