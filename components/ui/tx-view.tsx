@@ -14,6 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { Button } from "./button";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import Image from "next/image";
+import { TxStatus } from "./tx-status";
 
 function makeBoxRow(
   box: IndexedErgoBox | ErgoTransactionOutput,
@@ -23,11 +24,18 @@ function makeBoxRow(
     "address" in box
       ? box.address
       : ErgoAddress.fromErgoTree(box.ergoTree).toString();
-  const tokens: Asset[] = box.assets as Asset[];
+  const tokens: { asset: Asset; info: IndexedToken }[] = (
+    box.assets as Asset[]
+  ).map((t) => {
+    return {
+      asset: t,
+      info: tokensAll.find((x) => x.id == t.tokenId) as IndexedToken,
+    };
+  });
   return (
     <div className="flex w-full p-1 justify-between" key={box.boxId}>
       <Link
-        className="block underline text-primary w-3/4 truncate hover:no-underline"
+        className="block text-primary w-3/4 truncate hover:underline"
         href={"../address?id=" + address}
       >
         {address}
@@ -43,14 +51,17 @@ function makeBoxRow(
                 +{tokens.length}
               </Button>
             </PopoverTrigger>
-            <PopoverContent side="right" className="w-80 h-2/5">
+            <PopoverContent side="right" className="w-auto h-2/5">
               {tokens.map((token) => (
-                <div key={token.tokenId}>
-                  <Avatar>
+                <div
+                  className="flex flex-wrap content-center hover:bg-muted transition-colors rounded-lg"
+                  key={token.asset.tokenId}
+                >
+                  <Avatar className="flex m-2">
                     <AvatarImage
                       src={
                         "https://raw.githubusercontent.com/spectrum-finance/token-logos/refs/heads/master/logos/ergo/" +
-                        token.tokenId +
+                        token.asset.tokenId +
                         ".svg"
                       }
                     />
@@ -64,8 +75,17 @@ function makeBoxRow(
                       />
                     </AvatarFallback>
                   </Avatar>
-                  {tokensAll.find((x) => x.id == token.tokenId)?.name}
-                  {token.amount}
+                  <div className="flex flex-col justify-center">
+                    <p className="mr-2 text-primary hover:underline">
+                      <Link href={"../token?id=" + token.asset.tokenId}>
+                        {token.info ? token.info.name : ""}
+                      </Link>
+                    </p>
+                    <p className="mr-2">
+                      {token.asset.amount /
+                        Math.pow(10, token.info ? token.info.decimals : 0)}
+                    </p>
+                  </div>
                 </div>
               ))}
             </PopoverContent>
@@ -87,7 +107,7 @@ interface TxViewProps {
 export function TxView({ tx, inputs, tokens }: TxViewProps) {
   return (
     <div>
-      <div className="flex flex-wrap justify-center mx-auto rounded-lg border m-4 w-3/4 p-6 text-lg">
+      <div className="flex flex-wrap justify-center mx-auto rounded-lg border m-4 w-3/4 p-6 text-lg bg-black bg-opacity-70">
         <div className="flex flex-wrap w-full">
           <div className="w-1/4">Transaction hash:</div>
           <div className="w-3/4 truncate">{tx.id}</div>
@@ -96,7 +116,7 @@ export function TxView({ tx, inputs, tokens }: TxViewProps) {
         <div className="flex flex-wrap w-full">
           <div className="w-1/4">Status:</div>
           <div className="w-3/4 truncate">
-            {"index" in tx ? "Confirmed" : "Unconfirmed"}
+            <TxStatus confirmed={"index" in tx} />
           </div>
         </div>
         <Separator className="m-3" />
@@ -114,7 +134,7 @@ export function TxView({ tx, inputs, tokens }: TxViewProps) {
           <div className="w-3/4 truncate">
             {"index" in tx ? (
               <Link
-                className="text-primary underline hover:no-underline"
+                className="text-primary hover:underline"
                 href={"../block?id=" + tx.blockId}
               >
                 {tx.inclusionHeight}
@@ -151,7 +171,7 @@ export function TxView({ tx, inputs, tokens }: TxViewProps) {
           <div className="w-3/4 truncate">Some type TODO</div>
         </div>
       </div>
-      <div className="flex flex-wrap mx-auto rounded-lg border m-4 w-3/4 p-6 justify-between">
+      <div className="flex flex-wrap mx-auto rounded-lg border m-4 w-3/4 p-6 justify-between bg-black bg-opacity-70">
         <div className="flex flex-wrap w-[49%] content-start">
           {inputs.map((x) => makeBoxRow(x, tokens))}
         </div>

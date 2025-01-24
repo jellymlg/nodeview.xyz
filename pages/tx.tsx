@@ -68,6 +68,7 @@ export default function Transaction() {
               tokens.current = await api.blockchain
                 .getTokensByIds(ids1.concat(ids2))
                 .then((resp) => resp.data);
+              forceUpdate();
             }
           }),
       );
