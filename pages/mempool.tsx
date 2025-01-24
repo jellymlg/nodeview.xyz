@@ -1,22 +1,11 @@
 import { DataTable } from "@/components/ui/data-table";
-import {
-  ErgoApi,
-  ErgoTransaction,
-  ErgoTransactionOutput,
-  Transactions,
-} from "../lib/ergo-api";
+import { ErgoApi, ErgoTransaction, Transactions } from "../lib/ergo-api";
 import { Column, ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import Link from "next/link";
-
-const feeTree: string =
-  "1005040004000e36100204a00b08cd0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798ea02d192a39a8cc7a701730073011001020402d19683030193a38cc7b2a57300000193c2b2a57301007473027303830108cdeeac93b1a57304";
-
-const feeFromTx: (tx: ErgoTransaction) => number = (tx: ErgoTransaction) =>
-  (tx.outputs.find((b) => b.ergoTree == feeTree) as ErgoTransactionOutput)
-    .value;
+import { feeFromTx } from "@/lib/utils";
 
 function SortButton<TColumn>(column: Column<TColumn>, text: string) {
   return (
