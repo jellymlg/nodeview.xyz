@@ -3,6 +3,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppProps } from "next/app";
 import { Navbar } from "@/components/ui/navbar";
+import { RustModule } from "@/lib/wasm";
+import { useEffect, useState } from "react";
 
 export const metadata: Metadata = {
   title: "ergoplatform.space",
@@ -10,6 +12,13 @@ export const metadata: Metadata = {
 };
 
 export default function App({ Component, pageProps }: AppProps) {
+  const [isRustModuleLoaded, setIsRustModuleLoaded] = useState(false);
+  useEffect(() => {
+    RustModule.load().then(() => setIsRustModuleLoaded(true));
+  }, []);
+  if (!isRustModuleLoaded) {
+    return null;
+  }
   return (
     <ThemeProvider
       attribute="class"

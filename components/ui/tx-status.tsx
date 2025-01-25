@@ -15,9 +15,9 @@ export function TxStatus({ confirmed }: TxStatusProps) {
       }
     >
       {confirmed ? (
-        <CircleCheckIcon className="inline pr-2" />
+        <CircleCheckIcon className="inline pr-1" />
       ) : (
-        <Clock3Icon className="inline pr-2" />
+        <Clock3Icon className="inline pr-1" />
       )}
       <span className="text-sm">{confirmed ? "Confirmed" : "Unconfirmed"}</span>
     </div>

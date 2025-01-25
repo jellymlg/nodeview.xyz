@@ -7,7 +7,6 @@ import {
   IndexedToken,
 } from "@/lib/ergo-api";
 import { feeFromTx } from "@/lib/utils";
-import { ErgoAddress } from "@fleet-sdk/core";
 import Link from "next/link";
 import { Separator } from "./separator";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
@@ -15,6 +14,8 @@ import { Button } from "./button";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import Image from "next/image";
 import { TxStatus } from "./tx-status";
+import { RustModule } from "@/lib/wasm";
+import { TxType } from "./tx-type";
 
 function makeBoxRow(
   box: IndexedErgoBox | ErgoTransactionOutput,
@@ -23,7 +24,9 @@ function makeBoxRow(
   const address: string =
     "address" in box
       ? box.address
-      : ErgoAddress.fromErgoTree(box.ergoTree).toString();
+      : RustModule.SigmaRust.Address.recreate_from_ergo_tree(
+          RustModule.SigmaRust.ErgoTree.from_base16_bytes(box.ergoTree),
+        ).to_base58(RustModule.SigmaRust.NetworkPrefix.Mainnet);
   const tokens: { asset: Asset; info: IndexedToken }[] = (
     box.assets as Asset[]
   ).map((t) => {
@@ -109,19 +112,21 @@ export function TxView({ tx, inputs, tokens }: TxViewProps) {
     <div>
       <div className="flex flex-wrap justify-center mx-auto rounded-lg border m-4 w-3/4 p-6 text-lg bg-black bg-opacity-70">
         <div className="flex flex-wrap w-full">
-          <div className="w-1/4">Transaction hash:</div>
+          <div className="w-1/4 flex content-center flex-wrap">
+            Transaction hash:
+          </div>
           <div className="w-3/4 truncate">{tx.id}</div>
         </div>
         <Separator className="m-3" />
         <div className="flex flex-wrap w-full">
-          <div className="w-1/4">Status:</div>
+          <div className="w-1/4 flex content-center flex-wrap">Status:</div>
           <div className="w-3/4 truncate">
             <TxStatus confirmed={"index" in tx} />
           </div>
         </div>
         <Separator className="m-3" />
         <div className="flex flex-wrap w-full">
-          <div className="w-1/4">Timestamp:</div>
+          <div className="w-1/4 flex content-center flex-wrap">Timestamp:</div>
           <div className="w-3/4 truncate">
             {"index" in tx
               ? new Date(tx.timestamp).toLocaleString()
@@ -130,7 +135,9 @@ export function TxView({ tx, inputs, tokens }: TxViewProps) {
         </div>
         <Separator className="m-3" />
         <div className="flex flex-wrap w-full">
-          <div className="w-1/4">Included in block:</div>
+          <div className="w-1/4 flex content-center flex-wrap">
+            Included in block:
+          </div>
           <div className="w-3/4 truncate">
             {"index" in tx ? (
               <Link
@@ -146,29 +153,33 @@ export function TxView({ tx, inputs, tokens }: TxViewProps) {
         </div>
         <Separator className="m-3" />
         <div className="flex flex-wrap w-full">
-          <div className="w-1/4">Confirmations:</div>
+          <div className="w-1/4 flex content-center flex-wrap">
+            Confirmations:
+          </div>
           <div className="w-3/4 truncate">
             {"index" in tx ? tx.numConfirmations : "Awaiting confirmation"}
           </div>
         </div>
         <Separator className="m-3" />
         <div className="flex flex-wrap w-full">
-          <div className="w-1/4">Size:</div>
+          <div className="w-1/4 flex content-center flex-wrap">Size:</div>
           <div className="w-3/4 truncate">
             {(tx.size as number) / 1000 + " kB"}
           </div>
         </div>
         <Separator className="m-3" />
         <div className="flex flex-wrap w-full">
-          <div className="w-1/4">Fee:</div>
+          <div className="w-1/4 flex content-center flex-wrap">Fee:</div>
           <div className="w-3/4 truncate">
             {feeFromTx(tx) / 1_000_000_000 + " ERG"}
           </div>
         </div>
         <Separator className="m-3" />
         <div className="flex flex-wrap w-full">
-          <div className="w-1/4">Type:</div>
-          <div className="w-3/4 truncate">Some type TODO</div>
+          <div className="w-1/4 flex content-center flex-wrap">Type:</div>
+          <div className="w-3/4 truncate">
+            <TxType inputs={inputs} outputs={tx.outputs} />
+          </div>
         </div>
       </div>
       <div className="flex flex-wrap mx-auto rounded-lg border m-4 w-3/4 p-6 justify-between bg-black bg-opacity-70">
