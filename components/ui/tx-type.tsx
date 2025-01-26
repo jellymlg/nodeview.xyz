@@ -3,7 +3,7 @@ import { toHex } from "@/lib/hex";
 import Image from "next/image";
 import { RustModule } from "@/lib/wasm";
 
-const contractTypes: Map<string, string> = new Map([
+const ErgoDexContracts: Map<string, string> = new Map([
   // N2T
   [
     "d802d601b2a4730000d6027301eb027302d195ed92b1a4730393b1db630872017304d80bd603db63087201d604b2a5730500d605b27203730600d6067e9973078c72050206d6077ec1720106d6089d9c7e72020672067207d609b27203730800d60a7e8c72090206d60b9d9c7e7309067206720ad60cdb63087204d60db2720c730a00ededededed938cb27203730b0001730c93c27204730d95ed8f7208720b93b1720c730ed801d60eb2720c730f00eded92c1720499c1a77310938c720e018c720901927e8c720e02069d9c99720b7208720a720695927208720b927ec1720406997ec1a706997e7202069d9c997208720b720772067311938c720d018c720501927e8c720d0206a17208720b90b0ada5d9010e639593c2720e7312c1720e73137314d9010e599a8c720e018c720e0273157316",
@@ -120,34 +120,58 @@ function template(box: ErgoTransactionOutput): string {
   );
 }
 
+interface TypeSettings {
+  color: string;
+  imageUrl: string;
+  text: string;
+}
+
+function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
+  // check ErgoDex contracts
+  const settledOrder = inputs
+    .map((x) => ErgoDexContracts.get(template(x)))
+    .find((x) => x);
+  const submittedOrder = outputs
+    .map((x) => ErgoDexContracts.get(template(x)))
+    .find((x) => x);
+  if (settledOrder || submittedOrder)
+    return {
+      color: "orange-700",
+      imageUrl: "ergodex.svg",
+      text:
+        (settledOrder ?? submittedOrder) +
+        (settledOrder ? " settled" : " submitted"),
+    };
+  // TODO add other types
+  // no special type detected
+  return { color: "blue-600", imageUrl: "transfer.svg", text: "Transfer" };
+}
+
 interface TxTypeProps {
   inputs: ErgoTransactionOutput[];
   outputs: ErgoTransactionOutput[];
 }
 
 export function TxType({ inputs, outputs }: TxTypeProps) {
-  inputs.forEach((x, i) =>
-    console.log("input" + i + (contractTypes.get(template(x)) ?? "transfer")),
-  );
-  outputs.forEach((x, i) =>
-    console.log("output" + i + (contractTypes.get(template(x)) ?? "transfer")),
-  );
+  const type = deduceType({ inputs, outputs });
   return (
     <div
       className={
-        "bg-orange-700 bg-opacity-50 border border-orange-700 rounded-lg w-fit p-1"
+        "bg-" +
+        type.color +
+        " bg-opacity-50 border border-" +
+        type.color +
+        " rounded-lg w-fit p-1"
       }
     >
       <Image
         width={0}
         height={0}
         className="inline mr-1 aspect-square w-[20px]"
-        src="ergodex.svg"
-        alt="ErgoDex logo"
+        src={type.imageUrl}
+        alt="type logo"
       />
-      <span className="text-sm">
-        {contractTypes.get(template(outputs[0])) ?? "Transfer"}
-      </span>
+      <span className="text-sm">{type.text}</span>
     </div>
   );
 }

@@ -44,7 +44,7 @@ function makeBoxRow(
         {address}
       </Link>
       <div className="flex">
-        <span className="flex items-center">
+        <span className="whitespace-nowrap">
           {box.value / 1_000_000_000} ERG
         </span>
         {tokens.length > 0 ? (
@@ -81,7 +81,7 @@ function makeBoxRow(
                   <div className="flex flex-col justify-center">
                     <p className="mr-2 text-primary hover:underline">
                       <Link href={"../token?id=" + token.asset.tokenId}>
-                        {token.info ? token.info.name : ""}
+                        {token.info ? token.info.name : "unknown"}
                       </Link>
                     </p>
                     <p className="mr-2">
