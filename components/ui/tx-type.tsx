@@ -121,7 +121,7 @@ function template(box: ErgoTransactionOutput): string {
 }
 
 interface TypeSettings {
-  color: string;
+  color: string[];
   imageUrl: string;
   text: string;
 }
@@ -136,7 +136,7 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
     .find((x) => x);
   if (settledOrder || submittedOrder)
     return {
-      color: "orange-700",
+      color: ["bg-orange-700", "border-orange-700"],
       imageUrl: "ergodex.svg",
       text:
         (settledOrder ?? submittedOrder) +
@@ -144,7 +144,11 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
     };
   // TODO add other types
   // no special type detected
-  return { color: "blue-600", imageUrl: "transfer.svg", text: "Transfer" };
+  return {
+    color: ["bg-blue-600", "border-blue-600"],
+    imageUrl: "transfer.svg",
+    text: "Transfer",
+  };
 }
 
 interface TxTypeProps {
@@ -157,11 +161,10 @@ export function TxType({ inputs, outputs }: TxTypeProps) {
   return (
     <div
       className={
-        "bg-" +
-        type.color +
-        " bg-opacity-50 border border-" +
-        type.color +
-        " rounded-lg w-fit p-1"
+        "bg-opacity-50 border rounded-lg w-fit p-1 " +
+        type.color[0] +
+        " " +
+        type.color[1]
       }
     >
       <Image

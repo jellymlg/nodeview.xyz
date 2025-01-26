@@ -30,7 +30,7 @@ export default function Address() {
       });
     };
     fun();
-  }, [balance, addr]);
+  }, [addr]);
   if (!balance || !txs) {
     return <p>Not found address {addr}</p>;
   } else {
