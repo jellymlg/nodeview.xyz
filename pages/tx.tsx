@@ -28,20 +28,9 @@ export default function Transaction() {
         async (resp) => {
           setTx(resp.data);
           if (inputs.current.length == 0) {
-            inputs.current = await Promise.all(
-              resp.data.inputs.map(
-                async (x) =>
-                  await api.transactions
-                    .getUnconfirmedTransactionInputBoxById(x.boxId)
-                    .then(
-                      (resp) => resp.data,
-                      async () =>
-                        await api.blockchain
-                          .getBoxById(x.boxId)
-                          .then((resp) => resp.data),
-                    ),
-              ),
-            );
+            inputs.current = await api.utxo
+              .getBoxWithPoolByIds(resp.data.inputs.map((x) => x.boxId))
+              .then((resp) => resp.data);
             tokens.current = await api.blockchain
               .getTokensByIds(
                 (inputs.current as (ErgoTransactionOutput | IndexedErgoBox)[])
