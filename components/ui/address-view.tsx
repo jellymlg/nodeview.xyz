@@ -7,6 +7,7 @@ import Link from "next/link";
 import { TxType } from "./tx-type";
 import { TxStatus } from "./tx-status";
 import { feeFromTx } from "@/lib/utils";
+import { TokenInfo, TokenPopover } from "./token-popover";
 
 interface AddressViewProps {
   address: string;
@@ -89,6 +90,14 @@ export function AddressView({ address, txs, balance }: AddressViewProps) {
           </div>
           <div className="w-3/4 truncate">
             {(balance.confirmed?.nanoErgs as number) / 1_000_000_000 + " ERG"}
+            <TokenPopover
+              tokens={
+                balance.confirmed?.tokens.map(
+                  (x) => x as TokenInfo,
+                ) as TokenInfo[]
+              }
+              text={"+" + balance.confirmed?.tokens.length + " tokens"}
+            />
           </div>
         </div>
         <Separator className="m-3" />
@@ -98,6 +107,14 @@ export function AddressView({ address, txs, balance }: AddressViewProps) {
           </div>
           <div className="w-3/4 truncate">
             {(balance.unconfirmed?.nanoErgs as number) / 1_000_000_000 + " ERG"}
+            <TokenPopover
+              tokens={
+                balance.unconfirmed?.tokens.map(
+                  (x) => x as TokenInfo,
+                ) as TokenInfo[]
+              }
+              text={"+" + balance.unconfirmed?.tokens.length + " tokens"}
+            />
           </div>
         </div>
       </div>

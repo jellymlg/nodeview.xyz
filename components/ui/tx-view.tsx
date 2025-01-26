@@ -9,13 +9,10 @@ import {
 import { feeFromTx } from "@/lib/utils";
 import Link from "next/link";
 import { Separator } from "./separator";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-import { Button } from "./button";
-import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-import Image from "next/image";
 import { TxStatus } from "./tx-status";
 import { RustModule } from "@/lib/wasm";
 import { TxType } from "./tx-type";
+import { TokenInfo, TokenPopover } from "./token-popover";
 
 function makeBoxRow(
   box: IndexedErgoBox | ErgoTransactionOutput,
@@ -27,13 +24,14 @@ function makeBoxRow(
       : RustModule.SigmaRust.Address.recreate_from_ergo_tree(
           RustModule.SigmaRust.ErgoTree.from_base16_bytes(box.ergoTree),
         ).to_base58(RustModule.SigmaRust.NetworkPrefix.Mainnet);
-  const tokens: { asset: Asset; info: IndexedToken }[] = (
-    box.assets as Asset[]
-  ).map((t) => {
+  const tokens: TokenInfo[] = (box.assets as Asset[]).map((t) => {
+    const x = tokensAll.find((x) => x.id == t.tokenId) as IndexedToken;
     return {
-      asset: t,
-      info: tokensAll.find((x) => x.id == t.tokenId) as IndexedToken,
-    };
+      tokenId: t.tokenId,
+      amount: t.amount,
+      decimals: x ? x.decimals : 0,
+      name: x ? x.name : "unknown",
+    } as TokenInfo;
   });
   return (
     <div className="flex w-full p-1 justify-between" key={box.boxId}>
@@ -48,51 +46,7 @@ function makeBoxRow(
           {box.value / 1_000_000_000} ERG
         </span>
         {tokens.length > 0 ? (
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button className="p-0 h-auto" variant="link">
-                +{tokens.length}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent side="right" className="w-auto h-2/5">
-              {tokens.map((token) => (
-                <div
-                  className="flex flex-wrap content-center hover:bg-muted transition-colors rounded-lg"
-                  key={token.asset.tokenId}
-                >
-                  <Avatar className="flex m-2">
-                    <AvatarImage
-                      src={
-                        "https://raw.githubusercontent.com/spectrum-finance/token-logos/refs/heads/master/logos/ergo/" +
-                        token.asset.tokenId +
-                        ".svg"
-                      }
-                    />
-                    <AvatarFallback>
-                      <Image
-                        width={0}
-                        height={0}
-                        className="aspect-square h-full w-full"
-                        src="https://raw.githubusercontent.com/spectrum-finance/token-logos/refs/heads/master/logos/empty.svg"
-                        alt="Token logo"
-                      />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col justify-center">
-                    <p className="mr-2 text-primary hover:underline">
-                      <Link href={"../token?id=" + token.asset.tokenId}>
-                        {token.info ? token.info.name : "unknown"}
-                      </Link>
-                    </p>
-                    <p className="mr-2">
-                      {token.asset.amount /
-                        Math.pow(10, token.info ? token.info.decimals : 0)}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </PopoverContent>
-          </Popover>
+          <TokenPopover tokens={tokens} text={"+" + tokens.length} />
         ) : (
           ""
         )}
