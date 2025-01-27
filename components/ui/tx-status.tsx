@@ -5,6 +5,7 @@ interface TxStatusProps {
 }
 
 export function TxStatus({ confirmed }: TxStatusProps) {
+  const textColor = confirmed ? "text-green-400" : "text-yellow-300";
   return (
     <div
       className={
@@ -15,11 +16,13 @@ export function TxStatus({ confirmed }: TxStatusProps) {
       }
     >
       {confirmed ? (
-        <CircleCheckIcon className="inline pr-1" />
+        <CircleCheckIcon className={"inline pr-1 " + textColor} />
       ) : (
-        <Clock3Icon className="inline pr-1" />
+        <Clock3Icon className={"inline pr-1 " + textColor} />
       )}
-      <span className="text-sm">{confirmed ? "Confirmed" : "Unconfirmed"}</span>
+      <span className={"text-sm " + textColor}>
+        {confirmed ? "Confirmed" : "Unconfirmed"}
+      </span>
     </div>
   );
 }

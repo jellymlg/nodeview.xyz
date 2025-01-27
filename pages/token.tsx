@@ -1,3 +1,4 @@
+import { TokenView } from "@/components/ui/token-view";
 import { ErgoApi, IndexedToken } from "@/lib/ergo-api";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,10 +18,6 @@ export default function Token() {
   if (!token) {
     return <p>Not found token with id {id}</p>;
   } else {
-    return (
-      <div>
-        <p>Found token with id {id}</p>
-      </div>
-    );
+    return <TokenView token={token} />;
   }
 }

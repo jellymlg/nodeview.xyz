@@ -6,11 +6,10 @@ import {
   IndexedErgoTransaction,
   IndexedToken,
 } from "@/lib/ergo-api";
-import { feeFromTx } from "@/lib/utils";
+import { feeFromTx, MainNetAddressFromErgoTree } from "@/lib/utils";
 import Link from "next/link";
 import { Separator } from "./separator";
 import { TxStatus } from "./tx-status";
-import { RustModule } from "@/lib/wasm";
 import { TxType } from "./tx-type";
 import { TokenInfo, TokenPopover } from "./token-popover";
 
@@ -19,11 +18,7 @@ function makeBoxRow(
   tokensAll: IndexedToken[],
 ) {
   const address: string =
-    "address" in box
-      ? box.address
-      : RustModule.SigmaRust.Address.recreate_from_ergo_tree(
-          RustModule.SigmaRust.ErgoTree.from_base16_bytes(box.ergoTree),
-        ).to_base58(RustModule.SigmaRust.NetworkPrefix.Mainnet);
+    "address" in box ? box.address : MainNetAddressFromErgoTree(box.ergoTree);
   const tokens: TokenInfo[] = (box.assets as Asset[]).map((t) => {
     const x = tokensAll.find((x) => x.id == t.tokenId) as IndexedToken;
     return {

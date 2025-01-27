@@ -136,7 +136,7 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
     .find((x) => x);
   if (settledOrder || submittedOrder)
     return {
-      color: ["bg-orange-700", "border-orange-700"],
+      color: ["bg-orange-700", "border-orange-700", "text-orange-400"],
       imageUrl: "ergodex.svg",
       text:
         (settledOrder ?? submittedOrder) +
@@ -145,7 +145,7 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
   // TODO add other types
   // no special type detected
   return {
-    color: ["bg-blue-600", "border-blue-600"],
+    color: ["bg-blue-600", "border-blue-600", "text-blue-300"],
     imageUrl: "transfer.svg",
     text: "Transfer",
   };
@@ -174,7 +174,7 @@ export function TxType({ inputs, outputs }: TxTypeProps) {
         src={type.imageUrl}
         alt="type logo"
       />
-      <span className="text-sm">{type.text}</span>
+      <span className={"text-sm " + type.color[2]}>{type.text}</span>
     </div>
   );
 }

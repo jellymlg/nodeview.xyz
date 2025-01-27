@@ -1,5 +1,5 @@
+import { BlockView } from "@/components/ui/block-view";
 import { ErgoApi, FullBlock } from "@/lib/ergo-api";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -18,15 +18,6 @@ export default function Block() {
   if (!block) {
     return <p>Not found block with id {id}</p>;
   } else {
-    return (
-      <div>
-        <p>Found block {block.header.id}</p>
-        {block.blockTransactions.transactions.map((tx) => (
-          <p key={tx.id}>
-            <Link href={("../tx?id=" + tx.id) as string}>{tx.id}</Link>
-          </p>
-        ))}
-      </div>
-    );
+    return <BlockView block={block} />;
   }
 }

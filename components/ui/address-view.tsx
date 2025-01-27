@@ -90,14 +90,18 @@ export function AddressView({ address, txs, balance }: AddressViewProps) {
           </div>
           <div className="w-3/4 truncate">
             {(balance.confirmed?.nanoErgs as number) / 1_000_000_000 + " ERG"}
-            <TokenPopover
-              tokens={
-                balance.confirmed?.tokens.map(
-                  (x) => x as TokenInfo,
-                ) as TokenInfo[]
-              }
-              text={"+" + balance.confirmed?.tokens.length + " tokens"}
-            />
+            {(balance.confirmed?.tokens.length as number) > 0 ? (
+              <TokenPopover
+                tokens={
+                  balance.confirmed?.tokens.map(
+                    (x) => x as TokenInfo,
+                  ) as TokenInfo[]
+                }
+                text={"+" + balance.confirmed?.tokens.length + " tokens"}
+              />
+            ) : (
+              ""
+            )}
           </div>
         </div>
         <Separator className="m-3" />
@@ -107,14 +111,18 @@ export function AddressView({ address, txs, balance }: AddressViewProps) {
           </div>
           <div className="w-3/4 truncate">
             {(balance.unconfirmed?.nanoErgs as number) / 1_000_000_000 + " ERG"}
-            <TokenPopover
-              tokens={
-                balance.unconfirmed?.tokens.map(
-                  (x) => x as TokenInfo,
-                ) as TokenInfo[]
-              }
-              text={"+" + balance.unconfirmed?.tokens.length + " tokens"}
-            />
+            {(balance.unconfirmed?.tokens.length as number) > 0 ? (
+              <TokenPopover
+                tokens={
+                  balance.unconfirmed?.tokens.map(
+                    (x) => x as TokenInfo,
+                  ) as TokenInfo[]
+                }
+                text={"+" + balance.unconfirmed?.tokens.length + " tokens"}
+              />
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </div>

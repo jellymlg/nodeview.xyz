@@ -33,7 +33,7 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
     cell: ({ row }) => {
       return (
         <Link
-          className="text-primary underline"
+          className="text-primary hover:underline"
           href={"tx?id=" + row.original.id}
         >
           {row.original.id}

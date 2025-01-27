@@ -5,6 +5,7 @@ import {
   ErgoTransactionOutput,
   IndexedErgoTransaction,
 } from "./ergo-api";
+import { RustModule } from "./wasm";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -20,4 +21,10 @@ export function feeFromTx(
     (b) => b.ergoTree == feeTree,
   ) as ErgoTransactionOutput;
   return feeBox ? feeBox.value : 0;
+}
+
+export function MainNetAddressFromErgoTree(ergoTree: string) {
+  return RustModule.SigmaRust.Address.recreate_from_ergo_tree(
+    RustModule.SigmaRust.ErgoTree.from_base16_bytes(ergoTree),
+  ).to_base58(RustModule.SigmaRust.NetworkPrefix.Mainnet);
 }
