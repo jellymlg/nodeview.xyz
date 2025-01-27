@@ -79,7 +79,7 @@ export function AddressView({ address, txs, balance }: AddressViewProps) {
         <Separator className="m-3" />
         <div className="flex flex-wrap w-full">
           <div className="w-1/4 flex content-center flex-wrap">
-            Transactions:
+            Number of transactions:
           </div>
           <div className="w-3/4 truncate">{txs?.total}</div>
         </div>

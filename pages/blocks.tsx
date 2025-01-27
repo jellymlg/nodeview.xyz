@@ -1,13 +1,5 @@
 import { DataTable } from "@/components/ui/data-table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
 import { ErgoApi, FullBlock } from "@/lib/ergo-api";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
@@ -100,49 +92,11 @@ export default function Blocks() {
     <div className="flex flex-wrap justify-center">
       <DataTable columns={BlockColumns} data={blocks}></DataTable>
       {blocks.length > 0 && (
-        <Pagination>
-          <PaginationContent>
-            {num > 1 && (
-              <div className="flex">
-                <PaginationItem>
-                  <PaginationPrevious href={"/blocks?page=" + (num - 1)} />
-                </PaginationItem>
-                {num > 2 && (
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                )}
-                <PaginationItem>
-                  <PaginationLink href={"/blocks?page=" + (num - 1)}>
-                    {num - 1}
-                  </PaginationLink>
-                </PaginationItem>
-              </div>
-            )}
-            <PaginationItem>
-              <PaginationLink href={"/blocks?page=" + num} isActive>
-                {num}
-              </PaginationLink>
-            </PaginationItem>
-            {blocks[blocks.length - 1].header.height > 1 && (
-              <div className="flex">
-                <PaginationItem>
-                  <PaginationLink href={"/blocks?page=" + (num + 1)}>
-                    {num + 1}
-                  </PaginationLink>
-                </PaginationItem>
-                {blocks[blocks.length - 1].header.height >= 30 && (
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                )}
-                <PaginationItem>
-                  <PaginationNext href={"/blocks?page=" + (num + 1)} />
-                </PaginationItem>
-              </div>
-            )}
-          </PaginationContent>
-        </Pagination>
+        <DynamicPagination
+          current={num}
+          lastElemNum={blocks[blocks.length - 1].header.height}
+          urlBase="/blocks?page="
+        />
       )}
     </div>
   );

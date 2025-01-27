@@ -1,4 +1,5 @@
 import { AddressView } from "@/components/ui/address-view";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
 import { BalanceInfo, ErgoApi, IndexedErgoTransaction } from "@/lib/ergo-api";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ export interface BalanceResponse {
 
 export default function Address() {
   const addr: string = useSearchParams().get("id") as string;
+  const page: number = parseInt(useSearchParams().get("page") ?? "1");
   const [txs, setTxs] = useState<TxsResponse>();
   const [balance, setBalance] = useState<BalanceResponse>();
   useEffect(() => {
@@ -25,15 +27,24 @@ export default function Address() {
       api.blockchain.getAddressBalanceTotal(addr).then((resp) => {
         setBalance(resp.data);
         api.blockchain
-          .getTxsByAddress(addr, { offset: 0, limit: 30 })
+          .getTxsByAddress(addr, { offset: (page - 1) * 30, limit: 30 })
           .then((resp) => setTxs(resp.data));
       });
     };
     fun();
-  }, [addr]);
+  }, [addr, page]);
   if (!balance || !txs) {
     return <p>Not found address {addr}</p>;
   } else {
-    return <AddressView address={addr} txs={txs} balance={balance} />;
+    return (
+      <div className="flex flex-wrap justify-center">
+        <AddressView address={addr} txs={txs} balance={balance} />
+        <DynamicPagination
+          current={page}
+          lastElemNum={(txs.total as number) - page * 30}
+          urlBase={"/address?id=" + addr + "&page="}
+        />
+      </div>
+    );
   }
 }
