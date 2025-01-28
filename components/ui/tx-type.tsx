@@ -161,16 +161,16 @@ export function TxType({ inputs, outputs }: TxTypeProps) {
   return (
     <div
       className={
-        "bg-opacity-50 border rounded-lg w-fit p-1 " +
+        "flex items-center bg-opacity-50 border rounded-lg w-fit p-1 " +
         type.color[0] +
         " " +
         type.color[1]
       }
     >
       <Image
-        width={0}
-        height={0}
-        className="inline mr-1 aspect-square w-[20px]"
+        width={20}
+        height={20}
+        className="inline mr-1 aspect-square w-[20px] h-[20px]"
         src={type.imageUrl}
         alt="type logo"
       />

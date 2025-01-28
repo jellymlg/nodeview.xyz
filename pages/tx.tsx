@@ -8,7 +8,7 @@ import {
   IndexedErgoTransaction,
   IndexedToken,
 } from "@/lib/ergo-api";
-import { useSearchParams } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 
@@ -18,6 +18,7 @@ export default function Transaction() {
   const inputs = useRef<(ErgoTransactionOutput | IndexedErgoBox)[]>([]);
   const tokens = useRef<IndexedToken[]>([]);
   const tm = useRef<NodeJS.Timeout>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const forceUpdate = React.useReducer(() => ({}), {})[1] as () => void;
   useEffect(() => {
     if (!id || id.length != 64) return;
@@ -39,37 +40,47 @@ export default function Transaction() {
                   .map((x) => x.tokenId),
               )
               .then((resp) => resp.data);
+            setLoading(false);
             forceUpdate();
           }
           tm.current = setTimeout(fun, 5000);
         },
         async () =>
-          await api.blockchain.getTxById(id).then(async (resp) => {
-            setTx(resp.data);
-            if (inputs.current.length == 0) inputs.current = resp.data.inputs;
-            if (tokens.current.length == 0) {
-              const ids1: string[] = resp.data.inputs.flatMap((x) =>
-                x.assets?.map((y) => y.tokenId),
-              ) as string[];
-              const ids2: string[] = resp.data.outputs.flatMap((x) =>
-                x.assets?.map((y) => y.tokenId),
-              ) as string[];
-              tokens.current = await api.blockchain
-                .getTokensByIds(ids1.concat(ids2))
-                .then((resp) => resp.data);
-              forceUpdate();
-            }
-          }),
+          await api.blockchain.getTxById(id).then(
+            async (resp) => {
+              setTx(resp.data);
+              if (inputs.current.length == 0) inputs.current = resp.data.inputs;
+              if (tokens.current.length == 0) {
+                const ids1: string[] = resp.data.inputs.flatMap((x) =>
+                  x.assets?.map((y) => y.tokenId),
+                ) as string[];
+                const ids2: string[] = resp.data.outputs.flatMap((x) =>
+                  x.assets?.map((y) => y.tokenId),
+                ) as string[];
+                tokens.current = await api.blockchain
+                  .getTokensByIds(ids1.concat(ids2))
+                  .then((resp) => resp.data);
+                setLoading(false);
+                forceUpdate();
+              }
+            },
+            () => setLoading(false),
+          ),
       );
     };
     fun();
     return () => clearTimeout(tm.current as NodeJS.Timeout);
   }, [id]);
-  if (!tx) {
-    return <p>Not found tx with id {id}</p>;
+  if (!tx && !loading) {
+    return notFound();
   } else {
     return (
-      <TxView tx={tx} inputs={inputs.current} tokens={tokens.current}></TxView>
+      <TxView
+        tx={tx as ErgoTransaction | IndexedErgoTransaction}
+        inputs={inputs.current}
+        tokens={tokens.current}
+        loading={loading}
+      ></TxView>
     );
   }
 }

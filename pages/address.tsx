@@ -1,7 +1,7 @@
 import { AddressView } from "@/components/ui/address-view";
 import { DynamicPagination } from "@/components/ui/dynamic-pagination";
 import { BalanceInfo, ErgoApi, IndexedErgoTransaction } from "@/lib/ergo-api";
-import { useSearchParams } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export interface TxsResponse {
@@ -19,6 +19,7 @@ export default function Address() {
   const page: number = parseInt(useSearchParams().get("page") ?? "1");
   const [txs, setTxs] = useState<TxsResponse>();
   const [balance, setBalance] = useState<BalanceResponse>();
+  const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     if (!addr) return;
     const api = new ErgoApi();
@@ -28,22 +29,34 @@ export default function Address() {
         setBalance(resp.data);
         api.blockchain
           .getTxsByAddress(addr, { offset: (page - 1) * 30, limit: 30 })
-          .then((resp) => setTxs(resp.data));
+          .then((resp) => {
+            setTxs(resp.data);
+            setLoading(false);
+          });
       });
     };
     fun();
   }, [addr, page]);
-  if (!balance || !txs) {
-    return <p>Not found address {addr}</p>;
+  if ((!balance || !txs) && !loading) {
+    return notFound();
   } else {
     return (
-      <div className="flex flex-wrap justify-center">
-        <AddressView address={addr} txs={txs} balance={balance} />
-        <DynamicPagination
-          current={page}
-          lastElemNum={(txs.total as number) - page * 30}
-          urlBase={"/address?id=" + addr + "&page="}
+      <div>
+        <AddressView
+          address={addr}
+          txs={txs}
+          balance={balance as BalanceResponse}
+          loading={loading}
         />
+        {loading ? (
+          ""
+        ) : (
+          <DynamicPagination
+            current={page}
+            lastElemNum={(txs?.total as number) - page * 30}
+            urlBase={"/address?id=" + addr + "&page="}
+          />
+        )}
       </div>
     );
   }

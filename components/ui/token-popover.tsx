@@ -24,7 +24,10 @@ export function TokenPopover({ tokens, text }: TokenPopoverProps) {
           {text}
         </Button>
       </PopoverTrigger>
-      <PopoverContent side="right" className="w-auto h-2/5">
+      <PopoverContent
+        side="right"
+        className="w-auto max-h-[500px] overflow-auto"
+      >
         {tokens.map((token) => (
           <div
             className="flex flex-wrap content-center hover:bg-muted transition-colors rounded-lg"
