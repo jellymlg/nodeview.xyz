@@ -8,6 +8,7 @@ export default function Token() {
   const [token, setToken] = useState<IndexedToken>();
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
+    document.title = "ErgoSpace | Token";
     if (!id || id.length != 64) return;
     const api = new ErgoApi();
     api.baseUrl = "http://213.239.193.208:9053";

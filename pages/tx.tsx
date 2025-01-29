@@ -21,6 +21,7 @@ export default function Transaction() {
   const [loading, setLoading] = useState<boolean>(true);
   const forceUpdate = React.useReducer(() => ({}), {})[1] as () => void;
   useEffect(() => {
+    document.title = "ErgoSpace | Transaction";
     if (!id || id.length != 64) return;
     const api = new ErgoApi();
     api.baseUrl = "http://213.239.193.208:9053";

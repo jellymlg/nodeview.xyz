@@ -60,6 +60,7 @@ export const BlockColumns: ColumnDef<FullBlock>[] = [
 ];
 
 export default function Blocks() {
+  document.title = "ErgoSpace | Blocks";
   const num: number = parseInt(useSearchParams().get("page") as string);
   const [blocks, setBlocks] = useState<FullBlock[]>([]);
   useEffect(() => {

@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
-
 export default function Index() {
+  document.title = "ErgoSpace | Home";
   return (
-    <div>
-      <p>Hello world</p>
-      <Button>Button</Button>
+    <div className="text-center text-5xl">
+      <p>Ergoplatform.space decentralized blockchain explorer</p>
+      <br />
+      <p>TODO homepage</p>
     </div>
   );
 }

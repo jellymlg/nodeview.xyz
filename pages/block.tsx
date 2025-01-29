@@ -4,6 +4,7 @@ import { notFound, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Block() {
+  document.title = "ErgoSpace | Block";
   const id: string = useSearchParams().get("id") as string;
   const [block, setBlock] = useState<FullBlock>();
   const [loading, setLoading] = useState<boolean>(true);

@@ -8,6 +8,10 @@ body {
   @apply bg-no-repeat min-h-screen overflow-y-scroll
 }
 
+/* Radix UI NavigationMenuPrimitive.List relative div fix */
+nav > div {
+  display: contents;
+}
 
 @layer base {
   :root {
