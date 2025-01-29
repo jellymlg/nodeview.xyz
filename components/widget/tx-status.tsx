@@ -5,7 +5,9 @@ interface TxStatusProps {
 }
 
 export function TxStatus({ confirmed }: TxStatusProps) {
-  const textColor = confirmed ? "text-green-400" : "text-yellow-300";
+  const textColor = confirmed
+    ? "text-green-800 dark:text-green-400"
+    : "text-yellow-700 dark:text-yellow-300";
   return (
     <div
       className={

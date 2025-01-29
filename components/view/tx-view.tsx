@@ -61,7 +61,7 @@ interface TxViewProps {
 export function TxView({ tx, inputs, tokens, loading }: TxViewProps) {
   return (
     <div className="max-h-min">
-      <div className="flex flex-wrap justify-center mx-auto rounded-lg border m-4 w-3/4 p-6 text-lg bg-black bg-opacity-70">
+      <div className="flex flex-wrap justify-center mx-auto rounded-lg border m-4 w-3/4 p-6 text-lg">
         <div className="flex flex-wrap w-full">
           <div className="w-1/4 flex content-center flex-wrap">
             Transaction hash:
@@ -168,7 +168,7 @@ export function TxView({ tx, inputs, tokens, loading }: TxViewProps) {
       {loading ? (
         ""
       ) : (
-        <div className="flex flex-wrap mx-auto rounded-lg border m-4 w-3/4 p-6 justify-between bg-black bg-opacity-70">
+        <div className="flex flex-wrap mx-auto rounded-lg border m-4 w-3/4 p-6 justify-between">
           <div className="flex flex-wrap w-[49%] content-start">
             {inputs.map((x) => makeBoxRow(x, tokens))}
           </div>

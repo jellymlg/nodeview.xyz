@@ -78,7 +78,7 @@ export function AddressView({
 }: AddressViewProps) {
   return (
     <div>
-      <div className="flex flex-wrap justify-center mx-auto rounded-lg border m-4 w-3/4 p-6 text-lg bg-black bg-opacity-70">
+      <div className="flex flex-wrap justify-center mx-auto rounded-lg border m-4 w-3/4 p-6 text-lg">
         <div className="flex flex-wrap w-full">
           <div className="w-1/4 flex content-center flex-wrap">Address:</div>
           {loading ? (

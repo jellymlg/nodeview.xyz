@@ -1,7 +1,9 @@
 import { ErgoTransactionOutput } from "@/lib/ergo-api";
 import { toHex } from "@/lib/hex";
-import Image from "next/image";
 import { RustModule } from "@/lib/wasm";
+import { JSX } from "react";
+import { ErgoDexIcon } from "./ergodex-icon";
+import { ArrowLeftRightIcon } from "lucide-react";
 
 const ErgoDexContracts: Map<string, string> = new Map([
   // N2T
@@ -121,8 +123,8 @@ function template(box: ErgoTransactionOutput): string {
 }
 
 interface TypeSettings {
-  color: string[];
-  imageUrl: string;
+  colors: string;
+  icon: JSX.Element;
   text: string;
 }
 
@@ -136,8 +138,9 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
     .find((x) => x);
   if (settledOrder || submittedOrder)
     return {
-      color: ["bg-orange-700", "border-orange-700", "text-orange-400"],
-      imageUrl: "ergodex.svg",
+      colors:
+        "bg-orange-700 border-orange-700 text-orange-700 dark:text-orange-400 fill-orange-700 dark:fill-orange-400 stroke-orange-700 dark:stroke-orange-400",
+      icon: <ErgoDexIcon width={20} height={20} />,
       text:
         (settledOrder ?? submittedOrder) +
         (settledOrder ? " settled" : " submitted"),
@@ -145,8 +148,8 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
   // TODO add other types
   // no special type detected
   return {
-    color: ["bg-blue-600", "border-blue-600", "text-blue-300"],
-    imageUrl: "transfer.svg",
+    colors: "bg-blue-600 border-blue-600 text-blue-900 dark:text-blue-300",
+    icon: <ArrowLeftRightIcon width={20} height={20} />,
     text: "Transfer",
   };
 }
@@ -162,19 +165,11 @@ export function TxType({ inputs, outputs }: TxTypeProps) {
     <div
       className={
         "flex items-center bg-opacity-50 border rounded-lg w-fit p-1 " +
-        type.color[0] +
-        " " +
-        type.color[1]
+        type.colors
       }
     >
-      <Image
-        width={20}
-        height={20}
-        className="inline mr-1 aspect-square w-[20px] h-[20px]"
-        src={type.imageUrl}
-        alt="type logo"
-      />
-      <span className={"text-sm " + type.color[2]}>{type.text}</span>
+      {type.icon}
+      <span className="text-sm">{type.text}</span>
     </div>
   );
 }
