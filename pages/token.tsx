@@ -1,4 +1,4 @@
-import { TokenView } from "@/components/ui/token-view";
+import { TokenView } from "@/components/view/token-view";
 import { ErgoApi, IndexedToken } from "@/lib/ergo-api";
 import { notFound, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

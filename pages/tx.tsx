@@ -1,4 +1,4 @@
-import { TxView } from "@/components/ui/tx-view";
+import { TxView } from "@/components/view/tx-view";
 import {
   Asset,
   ErgoApi,

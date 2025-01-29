@@ -6,7 +6,7 @@ import {
   PaginationEllipsis,
   PaginationLink,
   PaginationNext,
-} from "./pagination";
+} from "./ui/pagination";
 
 interface DynamicPaginationProps {
   current: number;

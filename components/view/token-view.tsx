@@ -1,8 +1,8 @@
 import { IndexedToken } from "@/lib/ergo-api";
-import { Separator } from "./separator";
+import { Separator } from "../ui/separator";
 import Image from "next/image";
-import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-import { Skeleton } from "./skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Skeleton } from "../ui/skeleton";
 
 interface TokenViewProps {
   token: IndexedToken;

@@ -7,10 +7,10 @@ import {
 } from "@/components/ui/navigation-menu";
 import Image from "next/image";
 import Link from "next/link";
-import { Input } from "./input";
-import { Button } from "./button";
 import { useState } from "react";
 import { ErgoApi } from "@/lib/ergo-api";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 
 async function lookup(str: string) {
   const api = new ErgoApi();

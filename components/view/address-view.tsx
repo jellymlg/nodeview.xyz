@@ -1,14 +1,14 @@
 import { BalanceResponse, TxsResponse } from "@/pages/address";
-import { Separator } from "./separator";
-import { DataTable } from "./data-table";
+import { Separator } from "../ui/separator";
+import { DataTable } from "../data-table";
 import { IndexedErgoTransaction } from "@/lib/ergo-api";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { TxType } from "./tx-type";
-import { TxStatus } from "./tx-status";
+import { TxType } from "../widget/tx-type";
+import { TxStatus } from "../widget/tx-status";
 import { feeFromTx } from "@/lib/utils";
-import { TokenInfo, TokenPopover } from "./token-popover";
-import { Skeleton } from "./skeleton";
+import { TokenInfo, TokenPopover } from "../widget/token-popover";
+import { Skeleton } from "../ui/skeleton";
 
 interface AddressViewProps {
   address: string;

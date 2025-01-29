@@ -8,11 +8,11 @@ import {
 } from "@/lib/ergo-api";
 import { feeFromTx, MainNetAddressFromErgoTree } from "@/lib/utils";
 import Link from "next/link";
-import { Separator } from "./separator";
-import { TxStatus } from "./tx-status";
-import { TxType } from "./tx-type";
-import { TokenInfo, TokenPopover } from "./token-popover";
-import { Skeleton } from "./skeleton";
+import { Separator } from "../ui/separator";
+import { TxStatus } from "../widget/tx-status";
+import { TxType } from "../widget/tx-type";
+import { TokenInfo, TokenPopover } from "../widget/token-popover";
+import { Skeleton } from "../ui/skeleton";
 
 function makeBoxRow(
   box: IndexedErgoBox | ErgoTransactionOutput,

@@ -1,4 +1,4 @@
-import { BlockView } from "@/components/ui/block-view";
+import { BlockView } from "@/components/view/block-view";
 import { ErgoApi, FullBlock } from "@/lib/ergo-api";
 import { notFound, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

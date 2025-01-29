@@ -1,4 +1,4 @@
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable } from "@/components/data-table";
 import { ErgoApi, ErgoTransaction, Transactions } from "../lib/ergo-api";
 import { Column, ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";

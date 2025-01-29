@@ -1,5 +1,5 @@
-import { DataTable } from "@/components/ui/data-table";
-import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import { DataTable } from "@/components/data-table";
+import { DynamicPagination } from "@/components/dynamic-pagination";
 import { ErgoApi, FullBlock } from "@/lib/ergo-api";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";

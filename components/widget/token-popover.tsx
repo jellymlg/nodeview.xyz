@@ -1,9 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-import { Button } from "./button";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import Image from "next/image";
 import Link from "next/link";
-import { ScrollArea } from "./scroll-area";
+import { ScrollArea } from "../ui/scroll-area";
 
 export interface TokenInfo {
   tokenId: string;

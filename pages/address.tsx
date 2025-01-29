@@ -1,5 +1,5 @@
-import { AddressView } from "@/components/ui/address-view";
-import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import { AddressView } from "@/components/view/address-view";
+import { DynamicPagination } from "@/components/dynamic-pagination";
 import { BalanceInfo, ErgoApi, IndexedErgoTransaction } from "@/lib/ergo-api";
 import { notFound, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

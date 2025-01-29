@@ -3,12 +3,12 @@ import {
   ErgoTransactionOutput,
   FullBlock,
 } from "@/lib/ergo-api";
-import { Separator } from "./separator";
-import { DataTable } from "./data-table";
+import { Separator } from "../ui/separator";
+import { DataTable } from "../data-table";
 import { TxColumns } from "@/pages/mempool";
 import { MainNetAddressFromErgoTree } from "@/lib/utils";
 import Link from "next/link";
-import { Skeleton } from "./skeleton";
+import { Skeleton } from "../ui/skeleton";
 
 interface BlockViewProps {
   block: FullBlock;
