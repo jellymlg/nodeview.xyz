@@ -46,7 +46,7 @@ async function lookup(str: string) {
 export function Navbar() {
   const [search, setSearch] = useState<string>("");
   return (
-    <NavigationMenu className="w-auto mx-auto p-4 border rounded-lg m-4 bg-black bg-opacity-70">
+    <NavigationMenu className="w-full mx-auto p-4 border rounded-lg bg-black bg-opacity-70">
       <Image
         width={0}
         height={0}

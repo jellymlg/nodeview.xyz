@@ -19,7 +19,7 @@ interface TokenPopoverProps {
 
 export function TokenPopover({ tokens, text }: TokenPopoverProps) {
   return (
-    <Popover modal={true}>
+    <Popover>
       <PopoverTrigger asChild>
         <Button className="p-0 h-auto" variant="link">
           {text}

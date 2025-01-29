@@ -5,7 +5,17 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   background: linear-gradient(70deg, rgba(123,55,168,0.5) 0%, rgba(167,23,23,0.5) 50%, rgba(190,101,33,0.5) 100%);
-  @apply bg-no-repeat min-h-screen overflow-y-scroll
+  @apply bg-no-repeat min-h-screen overflow-y-scroll p-4
+}
+
+#__next {
+  flex-direction: column;
+  min-height: calc(100vh - 2rem);
+  @apply flex
+}
+
+#__next > div {
+  @apply flex-1
 }
 
 /* Radix UI NavigationMenuPrimitive.List relative div fix */

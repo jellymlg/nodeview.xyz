@@ -5,6 +5,7 @@ import { AppProps } from "next/app";
 import { Navbar } from "@/components/ui/navbar";
 import { RustModule } from "@/lib/wasm";
 import { useEffect, useState } from "react";
+import { Footer } from "@/components/ui/footer";
 
 export const metadata: Metadata = {
   title: "ergoplatform.space",
@@ -28,6 +29,7 @@ export default function App({ Component, pageProps }: AppProps) {
     >
       <Navbar />
       <Component {...pageProps} />
+      <Footer />
     </ThemeProvider>
   );
 }
