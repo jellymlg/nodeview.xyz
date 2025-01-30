@@ -68,26 +68,29 @@ export default function Blocks() {
     const api = new ErgoApi();
     api.baseUrl = "http://213.239.193.208:9053";
     const fun = async () => {
-      api.blockchain.getIndexedHeight().then((resp) => {
-        const off = Math.max(
-          0,
-          (resp.data.fullHeight as number) - 30 * (num - 1) - 29,
-        );
-        api.blocks
-          .getHeaderIds({
-            offset: off,
-            limit: 30,
-          })
-          .then((resp) => {
-            api.blocks
-              .getFullBlockByIds(resp.data.reverse())
-              .then((resp) => setBlocks(resp.data));
-          });
-      });
+      api.blockchain
+        .getIndexedHeight()
+        .then((resp) => {
+          const off = Math.max(
+            0,
+            (resp.data.fullHeight as number) - 30 * (num - 1) - 29,
+          );
+          api.blocks
+            .getHeaderIds({
+              offset: off,
+              limit: 30,
+            })
+            .then((resp) => {
+              api.blocks
+                .getFullBlockByIds(resp.data.reverse())
+                .then((resp) => setBlocks(resp.data))
+                .catch(() => fun());
+            })
+            .catch(() => fun());
+        })
+        .catch(() => fun());
     };
     fun();
-    const interval = setInterval(fun, 30000);
-    return () => clearInterval(interval);
   }, [num]);
   return (
     <div className="flex flex-wrap justify-center">

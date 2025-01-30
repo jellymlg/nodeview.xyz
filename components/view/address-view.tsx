@@ -150,16 +150,12 @@ export function AddressView({
           )}
         </div>
       </div>
-      {loading ? (
-        ""
-      ) : (
-        <div className="flex flex-wrap justify-center">
-          <DataTable
-            columns={IndexedTxColumns}
-            data={txs?.items as IndexedErgoTransaction[]}
-          />
-        </div>
-      )}
+      <div className="flex flex-wrap justify-center">
+        <DataTable
+          columns={IndexedTxColumns}
+          data={loading ? [] : (txs?.items as IndexedErgoTransaction[])}
+        />
+      </div>
     </div>
   );
 }

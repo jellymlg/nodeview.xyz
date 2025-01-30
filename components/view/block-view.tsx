@@ -104,16 +104,12 @@ export function BlockView({ block, loading }: BlockViewProps) {
           )}
         </div>
       </div>
-      {loading ? (
-        ""
-      ) : (
-        <div className="flex flex-wrap justify-center">
-          <DataTable
-            columns={TxColumns}
-            data={block.blockTransactions.transactions}
-          />
-        </div>
-      )}
+      <div className="flex flex-wrap justify-center">
+        <DataTable
+          columns={TxColumns}
+          data={loading ? [] : block.blockTransactions.transactions}
+        />
+      </div>
     </div>
   );
 }
