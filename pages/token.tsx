@@ -1,5 +1,6 @@
 import { TokenView } from "@/components/view/token-view";
-import { ErgoApi, IndexedToken } from "@/lib/ergo-api";
+import { IndexedToken } from "@/lib/ergo-api";
+import { NETWORK } from "@/lib/network";
 import { notFound, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -10,13 +11,13 @@ export default function Token() {
   useEffect(() => {
     document.title = "ErgoSpace | Token";
     if (!id || id.length != 64) return;
-    const api = new ErgoApi();
-    api.baseUrl = "http://213.239.193.208:9053";
     const fun = async () => {
-      api.blockchain.getTokenById(id).then((resp) => {
-        setToken(resp.data);
-        setLoading(false);
-      });
+      NETWORK.API()
+        .blockchain.getTokenById(id)
+        .then((resp) => {
+          setToken(resp.data);
+          setLoading(false);
+        });
     };
     fun();
   }, [id]);

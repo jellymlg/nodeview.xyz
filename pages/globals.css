@@ -3,18 +3,23 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  @apply min-h-screen overflow-y-scroll p-4
+  padding: 1rem !important;
+  @apply min-h-screen overflow-y-auto
 }
 
-#__next {
+main {
   flex-direction: column;
   min-height: calc(100vh - 2rem);
   @apply flex
 }
 
-#__next > div {
+main > div {
   @apply flex-1
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
 }
 
 /* Radix UI NavigationMenuPrimitive.List relative div fix */

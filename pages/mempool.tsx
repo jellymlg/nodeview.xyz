@@ -1,11 +1,12 @@
 import { DataTable } from "@/components/data-table";
-import { ErgoApi, ErgoTransaction, Transactions } from "../lib/ergo-api";
+import { ErgoTransaction, Transactions } from "../lib/ergo-api";
 import { Column, ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import Link from "next/link";
 import { feeFromTx } from "@/lib/utils";
+import { NETWORK } from "@/lib/network";
 
 function SortButton<TColumn>(column: Column<TColumn>, text: string) {
   return (
@@ -107,11 +108,9 @@ export default function Mempool() {
   document.title = "ErgoSpace | Mempool";
   const [txs, setTxs] = useState<Transactions>([]);
   useEffect(() => {
-    const api = new ErgoApi();
-    api.baseUrl = "http://213.239.193.208:9053";
     const fun = async () => {
-      api.transactions
-        .getUnconfirmedTransactions({ limit: 200 })
+      NETWORK.API()
+        .transactions.getUnconfirmedTransactions({ limit: 200 })
         .then((resp) => setTxs(resp.data));
     };
     fun();

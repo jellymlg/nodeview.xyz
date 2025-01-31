@@ -8,36 +8,34 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ErgoApi } from "@/lib/ergo-api";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { NETWORK } from "@/lib/network";
 
 async function lookup(str: string) {
-  const api = new ErgoApi();
-  api.baseUrl = "http://213.239.193.208:9053";
   console.log(str);
-  const address = await api.blockchain
-    .getAddressBalanceTotal(str)
+  const address = await NETWORK.API()
+    .blockchain.getAddressBalanceTotal(str)
     .then((resp) => resp.data)
     .catch(() => {});
   if (address) window.location.href = "/address?id=" + str;
-  const txMem = await api.transactions
-    .getUnconfirmedTransactionById(str)
+  const txMem = await NETWORK.API()
+    .transactions.getUnconfirmedTransactionById(str)
     .then((resp) => resp.data)
     .catch(() => {});
   if (txMem) window.location.href = "/tx?id=" + str;
-  const txConf = await api.blockchain
-    .getTxById(str)
+  const txConf = await NETWORK.API()
+    .blockchain.getTxById(str)
     .then((resp) => resp.data)
     .catch(() => {});
   if (txConf) window.location.href = "/tx?id=" + str;
-  const token = await api.blockchain
-    .getTokenById(str)
+  const token = await NETWORK.API()
+    .blockchain.getTokenById(str)
     .then((resp) => resp.data)
     .catch(() => {});
   if (token) window.location.href = "/token?id=" + str;
-  const block = await api.blocks
-    .getBlockHeaderById(str)
+  const block = await NETWORK.API()
+    .blocks.getBlockHeaderById(str)
     .then((resp) => resp.data)
     .catch(() => {});
   if (block) window.location.href = "/block?id=" + str;

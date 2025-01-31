@@ -1,5 +1,6 @@
 import { BlockView } from "@/components/view/block-view";
-import { ErgoApi, FullBlock } from "@/lib/ergo-api";
+import { FullBlock } from "@/lib/ergo-api";
+import { NETWORK } from "@/lib/network";
 import { notFound, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -10,13 +11,13 @@ export default function Block() {
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     if (!id || id.length != 64) return;
-    const api = new ErgoApi();
-    api.baseUrl = "http://213.239.193.208:9053";
     const fun = async () => {
-      api.blocks.getFullBlockById(id).then((resp) => {
-        setBlock(resp.data);
-        setLoading(false);
-      });
+      NETWORK.API()
+        .blocks.getFullBlockById(id)
+        .then((resp) => {
+          setBlock(resp.data);
+          setLoading(false);
+        });
     };
     fun();
   }, [id]);

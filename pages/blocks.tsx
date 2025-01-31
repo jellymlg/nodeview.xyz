@@ -1,6 +1,7 @@
 import { DataTable } from "@/components/data-table";
 import { DynamicPagination } from "@/components/dynamic-pagination";
-import { ErgoApi, FullBlock } from "@/lib/ergo-api";
+import { FullBlock } from "@/lib/ergo-api";
+import { NETWORK } from "@/lib/network";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -65,24 +66,22 @@ export default function Blocks() {
   const [blocks, setBlocks] = useState<FullBlock[]>([]);
   useEffect(() => {
     if (!num) return;
-    const api = new ErgoApi();
-    api.baseUrl = "http://213.239.193.208:9053";
     const fun = async () => {
-      api.blockchain
-        .getIndexedHeight()
+      NETWORK.API()
+        .blockchain.getIndexedHeight()
         .then((resp) => {
           const off = Math.max(
             0,
             (resp.data.fullHeight as number) - 30 * (num - 1) - 29,
           );
-          api.blocks
-            .getHeaderIds({
+          NETWORK.API()
+            .blocks.getHeaderIds({
               offset: off,
               limit: 30,
             })
             .then((resp) => {
-              api.blocks
-                .getFullBlockByIds(resp.data.reverse())
+              NETWORK.API()
+                .blocks.getFullBlockByIds(resp.data.reverse())
                 .then((resp) => setBlocks(resp.data))
                 .catch(() => fun());
             })
