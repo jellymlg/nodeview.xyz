@@ -1,31 +1,10 @@
 import { DataTable } from "@/components/data-table";
 import { ErgoTransaction, Transactions } from "../lib/ergo-api";
-import { Column, ColumnDef } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import Link from "next/link";
-import { feeFromTx } from "@/lib/utils";
+import { feeFromTx, MakeSortButton } from "@/lib/utils";
 import { NETWORK } from "@/lib/network";
-
-function SortButton<TColumn>(column: Column<TColumn>, text: string) {
-  return (
-    <Button
-      className="font-bold text-foreground"
-      variant="ghost"
-      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    >
-      {text}
-      {column.getIsSorted() === false ? (
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      ) : column.getIsSorted() === "asc" ? (
-        <ArrowUp className="ml-2 h-4 w-4" />
-      ) : (
-        <ArrowDown className="ml-2 h-4 w-4" />
-      )}
-    </Button>
-  );
-}
 
 export const TxColumns: ColumnDef<ErgoTransaction>[] = [
   {
@@ -44,21 +23,21 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
   },
   {
     accessorKey: "inputs",
-    header: ({ column }) => SortButton(column, "Inputs"),
+    header: ({ column }) => MakeSortButton(column, "Inputs"),
     cell: ({ row }) => {
       return row.original.inputs.length;
     },
   },
   {
     accessorKey: "outputs",
-    header: ({ column }) => SortButton(column, "Outputs"),
+    header: ({ column }) => MakeSortButton(column, "Outputs"),
     cell: ({ row }) => {
       return row.original.outputs.length;
     },
   },
   {
     accessorKey: "size",
-    header: ({ column }) => SortButton(column, "Size"),
+    header: ({ column }) => MakeSortButton(column, "Size"),
     cell: ({ row }) => {
       return (row.original.size as number) / 1000 + " kB";
     },
@@ -71,7 +50,7 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
   {
     id: "fee",
     accessorFn: feeFromTx,
-    header: ({ column }) => SortButton(column, "Fee"),
+    header: ({ column }) => MakeSortButton(column, "Fee"),
     cell: ({ row }) => {
       return feeFromTx(row.original) / 1_000_000_000 + " ERG";
     },
@@ -83,7 +62,7 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
   },
   {
     id: "feePerByte",
-    header: ({ column }) => SortButton(column, "Fee Per Byte"),
+    header: ({ column }) => MakeSortButton(column, "Fee Per Byte"),
     accessorFn: (row) => {
       return feeFromTx(row) / (row.size as number);
     },
@@ -118,7 +97,7 @@ export default function Mempool() {
     return () => clearInterval(interval);
   }, []);
   return (
-    <div className="flex flex-wrap justify-center">
+    <div className="flex flex-wrap justify-center w-3/4 mx-auto my-4">
       <DataTable columns={TxColumns} data={txs}></DataTable>
     </div>
   );

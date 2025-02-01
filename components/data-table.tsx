@@ -28,6 +28,7 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     data,
@@ -35,13 +36,15 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
+      rowSelection,
     },
   });
 
   return (
-    <div className="rounded-lg border m-4 w-3/4 max-h-min">
+    <div className="rounded-lg border w-full max-h-min">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

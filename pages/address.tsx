@@ -1,8 +1,9 @@
 import { AddressView } from "@/components/view/address-view";
 import { DynamicPagination } from "@/components/dynamic-pagination";
-import { BalanceInfo, ErgoApi, IndexedErgoTransaction } from "@/lib/ergo-api";
+import { BalanceInfo, IndexedErgoTransaction } from "@/lib/ergo-api";
 import { notFound, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { NETWORK } from "@/lib/network";
 
 export interface TxsResponse {
   items?: IndexedErgoTransaction[];
@@ -23,18 +24,21 @@ export default function Address() {
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     if (!addr) return;
-    const api = new ErgoApi();
-    api.baseUrl = "http://213.239.193.208:9053";
     const fun = async () => {
-      api.blockchain.getAddressBalanceTotal(addr).then((resp) => {
-        setBalance(resp.data);
-        api.blockchain
-          .getTxsByAddress(addr, { offset: (page - 1) * 30, limit: 30 })
-          .then((resp) => {
-            setTxs(resp.data);
-            setLoading(false);
-          });
-      });
+      NETWORK.API()
+        .blockchain.getAddressBalanceTotal(addr)
+        .then((resp) => {
+          setBalance(resp.data);
+          NETWORK.API()
+            .blockchain.getTxsByAddress(addr, {
+              offset: (page - 1) * 30,
+              limit: 30,
+            })
+            .then((resp) => {
+              setTxs(resp.data);
+              setLoading(false);
+            });
+        });
     };
     fun();
   }, [addr, page]);

@@ -6,6 +6,9 @@ import {
   IndexedErgoTransaction,
 } from "./ergo-api";
 import { RustModule } from "./wasm";
+import { Button } from "@/components/ui/button";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { Column } from "@tanstack/react-table";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -27,4 +30,23 @@ export function MainNetAddressFromErgoTree(ergoTree: string) {
   return RustModule.SigmaRust.Address.recreate_from_ergo_tree(
     RustModule.SigmaRust.ErgoTree.from_base16_bytes(ergoTree),
   ).to_base58(RustModule.SigmaRust.NetworkPrefix.Mainnet);
+}
+
+export function MakeSortButton<TColumn>(column: Column<TColumn>, text: string) {
+  return (
+    <Button
+      className="font-bold text-foreground"
+      variant="ghost"
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    >
+      {text}
+      {column.getIsSorted() === false ? (
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      ) : column.getIsSorted() === "asc" ? (
+        <ArrowUp className="ml-2 h-4 w-4" />
+      ) : (
+        <ArrowDown className="ml-2 h-4 w-4" />
+      )}
+    </Button>
+  );
 }

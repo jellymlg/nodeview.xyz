@@ -19,7 +19,6 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     RustModule.load().then(() => setIsRustModuleLoaded(true));
     NETWORK.init(localStorage);
-    console.log("_app effect");
   }, []);
   if (!isRustModuleLoaded) {
     return null;

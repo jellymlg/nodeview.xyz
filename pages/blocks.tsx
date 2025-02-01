@@ -92,8 +92,10 @@ export default function Blocks() {
     fun();
   }, [num]);
   return (
-    <div className="flex flex-wrap justify-center">
-      <DataTable columns={BlockColumns} data={blocks}></DataTable>
+    <div>
+      <div className="flex flex-wrap justify-center w-3/4 mx-auto my-4">
+        <DataTable columns={BlockColumns} data={blocks}></DataTable>
+      </div>
       {blocks.length > 0 && (
         <DynamicPagination
           current={num}
