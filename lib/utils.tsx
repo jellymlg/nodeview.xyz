@@ -3,12 +3,14 @@ import { twMerge } from "tailwind-merge";
 import {
   ErgoTransaction,
   ErgoTransactionOutput,
+  IndexedErgoBox,
   IndexedErgoTransaction,
 } from "./ergo-api";
 import { RustModule } from "./wasm";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { Column } from "@tanstack/react-table";
+import { NETWORK } from "./network";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -32,6 +34,12 @@ export function MainNetAddressFromErgoTree(ergoTree: string) {
   ).to_base58(RustModule.SigmaRust.NetworkPrefix.Mainnet);
 }
 
+export function ErgoTreeFromMainNetAddress(address: string) {
+  return RustModule.SigmaRust.Address.from_mainnet_str(address)
+    .to_ergo_tree()
+    .to_base16_bytes();
+}
+
 export function MakeSortButton<TColumn>(column: Column<TColumn>, text: string) {
   return (
     <Button
@@ -48,5 +56,48 @@ export function MakeSortButton<TColumn>(column: Column<TColumn>, text: string) {
         <ArrowDown className="ml-2 h-4 w-4" />
       )}
     </Button>
+  );
+}
+
+function asIndexedBox(box: ErgoTransactionOutput): IndexedErgoBox {
+  return {
+    ...box,
+    address: MainNetAddressFromErgoTree(box.ergoTree),
+    spentTransactionId: null,
+    spendingHeight: null,
+    inclusionHeight: 0,
+    globalIndex: 0,
+  };
+}
+
+export async function asIndexedTx(
+  tx: ErgoTransaction,
+): Promise<IndexedErgoTransaction> {
+  return {
+    id: tx.id as string,
+    inputs: (
+      await NETWORK.API()
+        .utxo.getBoxWithPoolByIds(tx.inputs.map((i) => i.boxId))
+        .then((resp) => resp.data)
+    ).map(asIndexedBox),
+    dataInputs: tx.dataInputs,
+    outputs: tx.outputs.map(asIndexedBox),
+    inclusionHeight: 0,
+    numConfirmations: 0,
+    blockId: "",
+    timestamp: 0,
+    index: 0,
+    globalIndex: 0,
+    size: tx.size as number,
+  };
+}
+
+export function getRateFromOracleBox(box: ErgoTransactionOutput): number {
+  return (
+    1_000_000_000 /
+    (RustModule.SigmaRust.ErgoBox.from_json(JSON.stringify(box))
+      .register_value(4)
+      ?.to_i64()
+      .as_num() as number)
   );
 }

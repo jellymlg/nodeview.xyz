@@ -49,13 +49,13 @@ const NodeColumns: ColumnDef<NodeInfo>[] = [
       return (
         <Checkbox
           checked={row.original.url == NETWORK.API().baseUrl}
+          disabled={!row.original.status}
           onCheckedChange={(value) => {
             if (value) {
               NETWORK.setNode(localStorage, row.index);
               table.setRowSelection({});
             }
           }}
-          aria-label="Select row"
         />
       );
     },

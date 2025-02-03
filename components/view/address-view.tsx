@@ -22,7 +22,9 @@ export const IndexedTxColumns: ColumnDef<IndexedErgoTransaction>[] = [
     accessorKey: "timestamp",
     header: "Timestamp",
     cell: ({ row }) => {
-      return new Date(row.original.timestamp).toLocaleString();
+      return row.original.timestamp > 0
+        ? new Date(row.original.timestamp).toLocaleString()
+        : "-";
     },
   },
   {
@@ -42,10 +44,10 @@ export const IndexedTxColumns: ColumnDef<IndexedErgoTransaction>[] = [
   {
     id: "status",
     header: "Status",
-    cell: ({}) => {
+    cell: ({ row }) => {
       return (
         <div className="flex justify-center">
-          <TxStatus confirmed={true} />
+          <TxStatus confirmed={row.original.timestamp > 0} />
         </div>
       );
     },

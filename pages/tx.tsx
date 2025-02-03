@@ -76,7 +76,7 @@ export default function Transaction() {
     };
     fun();
     return () => clearTimeout(tm.current as NodeJS.Timeout);
-  }, [id]);
+  }, [id, forceUpdate]);
   if (!tx && !loading) {
     return notFound();
   } else {

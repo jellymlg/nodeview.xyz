@@ -4,6 +4,7 @@ import { BalanceInfo, IndexedErgoTransaction } from "@/lib/ergo-api";
 import { notFound, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NETWORK } from "@/lib/network";
+import { asIndexedTx, ErgoTreeFromMainNetAddress } from "@/lib/utils";
 
 export interface TxsResponse {
   items?: IndexedErgoTransaction[];
@@ -35,8 +36,27 @@ export default function Address() {
               limit: 30,
             })
             .then((resp) => {
-              setTxs(resp.data);
-              setLoading(false);
+              const confirmed = resp.data;
+              setTxs(confirmed);
+              if (page > 1) setLoading(false);
+              else
+                NETWORK.API()
+                  .transactions.getUnconfirmedTransactionsByErgoTree(
+                    ErgoTreeFromMainNetAddress(addr),
+                    { limit: 100, offset: 0 },
+                  )
+                  .then(async (resp) => {
+                    const unconfirmed = await Promise.all(
+                      resp.data.map(asIndexedTx),
+                    );
+                    setTxs({
+                      items: unconfirmed.concat(
+                        confirmed.items as IndexedErgoTransaction[],
+                      ),
+                      total: (confirmed.total as number) + unconfirmed.length,
+                    });
+                    setLoading(false);
+                  });
             });
         });
     };
