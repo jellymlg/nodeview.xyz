@@ -24,6 +24,12 @@ class Network {
   public addNode(localStorage: Storage, url: string) {
     this.nodes.push(url);
     localStorage.setItem("nodes", this.nodes.join(";"));
+    this.update = Date.now();
+  }
+  public removeNode(localStorage: Storage, n: number) {
+    this.nodes.splice(n, 1);
+    localStorage.setItem("nodes", this.nodes.join(";"));
+    this.update = Date.now();
   }
   public setNode(localStorage: Storage, n: number) {
     localStorage.setItem("connected", "" + n);
