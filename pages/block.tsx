@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import Custom404 from "./404";
 
 export default function Block() {
-  document.title = "ErgoSpace | Block";
+  document.title = "NodeView | Block";
   const id: string = useSearchParams().get("id") as string;
   const [block, setBlock] = useState<FullBlock>();
   const [loading, setLoading] = useState<boolean>(true);

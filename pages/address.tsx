@@ -18,7 +18,7 @@ export interface BalanceResponse {
 }
 
 export default function Address() {
-  document.title = "ErgoSpace | Address";
+  document.title = "NodeView | Address";
   const addr: string = useSearchParams().get("id") as string;
   const page: number = parseInt(useSearchParams().get("page") ?? "1");
   const [txs, setTxs] = useState<TxsResponse>();

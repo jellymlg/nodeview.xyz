@@ -84,7 +84,7 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
 ];
 
 export default function Mempool() {
-  document.title = "ErgoSpace | Mempool";
+  document.title = "NodeView | Mempool";
   const [txs, setTxs] = useState<Transactions>([]);
   useEffect(() => {
     const fun = async () => {

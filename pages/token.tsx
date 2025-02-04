@@ -10,7 +10,7 @@ export default function Token() {
   const [token, setToken] = useState<IndexedToken>();
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
-    document.title = "ErgoSpace | Token";
+    document.title = "NodeView | Token";
     const fun = async () => {
       NETWORK.API()
         .blockchain.getTokenById(id)

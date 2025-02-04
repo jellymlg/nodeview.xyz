@@ -22,7 +22,7 @@ export default function Transaction() {
   const [loading, setLoading] = useState<boolean>(true);
   const forceUpdate = React.useReducer(() => ({}), {})[1] as () => void;
   useEffect(() => {
-    document.title = "ErgoSpace | Transaction";
+    document.title = "NodeView | Transaction";
     const fun = async () => {
       NETWORK.API()
         .transactions.getUnconfirmedTransactionById(id)
