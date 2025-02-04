@@ -66,6 +66,7 @@ export function PriceView() {
 
   useEffect(() => {
     const fun = async () => {
+      setLoading(true);
       const boxes = (await NETWORK.API()
         .blockchain.getBoxesByTokenId(PoolTokenId, {
           offset: 0,

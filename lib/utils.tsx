@@ -99,6 +99,7 @@ export interface NodeInfo {
   url: string;
   name: string;
   version: string;
+  height: number;
   ping: number;
 }
 
@@ -120,6 +121,7 @@ export async function GetNodeInfo(
     url: address,
     name: tmp ? tmp.name : "-",
     version: tmp ? tmp.appVersion : "-",
+    height: tmp ? (tmp.fullHeight as number) : 0,
     ping: tmp ? time2 - time1 : Infinity,
   };
 }
