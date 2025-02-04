@@ -3,13 +3,12 @@ import { ErgoApi } from "./ergo-api";
 class Network {
   private nodes: string[] = [
     "http://213.239.193.208:9053",
-    "https://ergo-node.zoomout.io",
     "https://ergo1.oette.info",
     "http://79.241.58.160:9053",
-    "https://ergo.homelinuxserver.org",
   ];
   private connected: number = 0;
   private api: ErgoApi<unknown> = new ErgoApi();
+  public update: number = Date.now();
   constructor() {
     this.api.baseUrl = this.nodes[this.connected];
   }
@@ -19,6 +18,9 @@ class Network {
   public getNodes(): string[] {
     return [...this.nodes];
   }
+  public getConnected(): string {
+    return this.nodes[this.connected];
+  }
   public addNode(localStorage: Storage, url: string) {
     this.nodes.push(url);
     localStorage.setItem("nodes", this.nodes.join(";"));
@@ -27,6 +29,7 @@ class Network {
     localStorage.setItem("connected", "" + n);
     this.connected = n;
     this.api.baseUrl = this.nodes[n];
+    this.update = Date.now();
   }
   public init(localStorage: Storage) {
     const saved = localStorage.getItem("nodes")?.split(";");

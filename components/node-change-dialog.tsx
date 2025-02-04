@@ -2,7 +2,6 @@ import { NETWORK } from "@/lib/network";
 import { Button } from "./ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -15,19 +14,9 @@ import { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { Check, X } from "lucide-react";
-import { MakeSortButton } from "@/lib/utils";
+import { GetNodeInfo, MakeSortButton, NodeInfo } from "@/lib/utils";
 import React from "react";
-import { ErgoApi } from "@/lib/ergo-api";
 import { Checkbox } from "./ui/checkbox";
-
-interface NodeInfo {
-  index: number;
-  status: boolean;
-  url: string;
-  name: string;
-  version: string;
-  ping: number;
-}
 
 const NodeColumns: ColumnDef<NodeInfo>[] = [
   {
@@ -88,26 +77,7 @@ export function NodeChangeDialog() {
   useEffect(() => {
     const fun = async () => {
       setInfos(
-        await Promise.all(
-          nodes.map(async (addr, i) => {
-            const api = new ErgoApi();
-            api.baseUrl = addr;
-            const time1 = performance.now();
-            const tmp = await api.info
-              .getNodeInfo()
-              .then((resp) => resp.data)
-              .catch(() => undefined);
-            const time2 = performance.now();
-            return {
-              index: i,
-              status: tmp !== undefined,
-              url: addr,
-              name: tmp ? tmp.name : "-",
-              version: tmp ? tmp.appVersion : "-",
-              ping: tmp ? time2 - time1 : Infinity,
-            };
-          }),
-        ),
+        await Promise.all(nodes.map(async (addr, i) => GetNodeInfo(addr, i))),
       );
     };
     if (nodes.length > 0) fun();
@@ -119,7 +89,7 @@ export function NodeChangeDialog() {
           Change node
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-max max-h-[75%] flex flex-col">
+      <DialogContent className="w-3/5 max-h-[75%] flex flex-col">
         <DialogHeader>
           <DialogTitle>Change node</DialogTitle>
           <DialogDescription>Number of nodes: {nodes.length}</DialogDescription>
@@ -127,19 +97,20 @@ export function NodeChangeDialog() {
         <div className="h-3/5 overflow-auto">
           <DataTable columns={NodeColumns} data={infos} />
         </div>
-        <Input onChange={(e) => setNewUrl(e.target.value)} />
-        <Button
-          onClick={() => {
-            NETWORK.addNode(localStorage, newUrl);
-            setNodes(NETWORK.getNodes());
-          }}
-        >
-          Add new node
-        </Button>
         <DialogFooter>
-          <DialogClose asChild>
-            <Button>Save changes</Button>
-          </DialogClose>
+          <Input
+            placeholder="Node URL"
+            onChange={(e) => setNewUrl(e.target.value)}
+          />
+          <Button
+            onClick={() => {
+              if (newUrl.length == 0) return;
+              NETWORK.addNode(localStorage, newUrl);
+              setNodes(NETWORK.getNodes());
+            }}
+          >
+            Add new node
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import { NETWORK } from "@/lib/network";
 import { ErgoTransactionOutput, IndexedErgoBox } from "@/lib/ergo-api";
 import { RustModule } from "@/lib/wasm";
+import { Skeleton } from "../ui/skeleton";
 
 const chartConfig = {
   price: {
@@ -61,6 +62,7 @@ const PoolTokenId =
 export function PriceView() {
   const [range, setRange] = useState<string>("720");
   const [data, setData] = useState<Data[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fun = async () => {
@@ -72,17 +74,18 @@ export function PriceView() {
         .then((resp) => resp.data.items)) as IndexedErgoBox[];
       const temp: Data[] = Array<Data>(boxes.length);
       for (
-        let i = 0, x = Date.now();
+        let i = 0, t = Date.now();
         i < temp.length;
-        i++, x -= 2 * 60 * 1000
+        i++, t -= 2 * 60 * 1000
       ) {
         const p = RateFromOracleBox(boxes[i]);
         temp[i] = {
-          date: new Date(x - 2 * 60 * 1000).toString(),
+          date: new Date(t - 2 * 60 * 1000).toString(),
           price: isNaN(p) || p == 0 || p == Infinity ? temp[i - 1].price : p,
         };
       }
       setData(temp.reverse());
+      setLoading(false);
     };
     fun();
   }, [range]);
@@ -115,65 +118,69 @@ export function PriceView() {
         </Select>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer
-          config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
-        >
-          <AreaChart data={data}>
-            <defs>
-              <linearGradient id="fillPrice" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-price)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-price)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-            </defs>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              minTickGap={32}
-              tickFormatter={(value) => {
-                return new Date(value).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                });
-              }}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={
-                <ChartTooltipContent
-                  labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "numeric",
-                    });
-                  }}
-                  indicator="dot"
-                />
-              }
-            />
-            <Area
-              dataKey="price"
-              type="natural"
-              fill="url(#fillPrice)"
-              stroke="var(--color-price)"
-              stackId="a"
-            />
-            <ChartLegend content={<ChartLegendContent />} />
-          </AreaChart>
-        </ChartContainer>
+        {loading ? (
+          <Skeleton className="w-full h-[250px]" />
+        ) : (
+          <ChartContainer
+            config={chartConfig}
+            className="aspect-auto h-[250px] w-full"
+          >
+            <AreaChart data={data}>
+              <defs>
+                <linearGradient id="fillPrice" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="5%"
+                    stopColor="var(--color-price)"
+                    stopOpacity={0.8}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor="var(--color-price)"
+                    stopOpacity={0.1}
+                  />
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                minTickGap={32}
+                tickFormatter={(value) => {
+                  return new Date(value).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  });
+                }}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={
+                  <ChartTooltipContent
+                    labelFormatter={(value) => {
+                      return new Date(value).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                      });
+                    }}
+                    indicator="dot"
+                  />
+                }
+              />
+              <Area
+                dataKey="price"
+                type="natural"
+                fill="url(#fillPrice)"
+                stroke="var(--color-price)"
+                stackId="a"
+              />
+              <ChartLegend content={<ChartLegendContent />} />
+            </AreaChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );

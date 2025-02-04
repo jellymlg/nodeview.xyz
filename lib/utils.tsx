@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
+  ErgoApi,
   ErgoTransaction,
   ErgoTransactionOutput,
   IndexedErgoBox,
@@ -89,5 +90,36 @@ export async function asIndexedTx(
     index: 0,
     globalIndex: 0,
     size: tx.size as number,
+  };
+}
+
+export interface NodeInfo {
+  index: number;
+  status: boolean;
+  url: string;
+  name: string;
+  version: string;
+  ping: number;
+}
+
+export async function GetNodeInfo(
+  address: string,
+  index: number,
+): Promise<NodeInfo> {
+  const api = new ErgoApi();
+  api.baseUrl = address;
+  const time1 = performance.now();
+  const tmp = await api.info
+    .getNodeInfo()
+    .then((resp) => resp.data)
+    .catch(() => undefined);
+  const time2 = performance.now();
+  return {
+    index: index,
+    status: tmp !== undefined,
+    url: address,
+    name: tmp ? tmp.name : "-",
+    version: tmp ? tmp.appVersion : "-",
+    ping: tmp ? time2 - time1 : Infinity,
   };
 }
