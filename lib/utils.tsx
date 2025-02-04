@@ -91,13 +91,3 @@ export async function asIndexedTx(
     size: tx.size as number,
   };
 }
-
-export function getRateFromOracleBox(box: ErgoTransactionOutput): number {
-  return (
-    1_000_000_000 /
-    (RustModule.SigmaRust.ErgoBox.from_json(JSON.stringify(box))
-      .register_value(4)
-      ?.to_i64()
-      .as_num() as number)
-  );
-}
