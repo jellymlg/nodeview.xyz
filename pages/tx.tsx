@@ -8,9 +8,10 @@ import {
   IndexedToken,
 } from "@/lib/ergo-api";
 import { NETWORK } from "@/lib/network";
-import { notFound, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
+import Custom404 from "./404";
 
 export default function Transaction() {
   const id: string = useSearchParams().get("id") as string;
@@ -22,7 +23,6 @@ export default function Transaction() {
   const forceUpdate = React.useReducer(() => ({}), {})[1] as () => void;
   useEffect(() => {
     document.title = "ErgoSpace | Transaction";
-    if (!id || id.length != 64) return;
     const fun = async () => {
       NETWORK.API()
         .transactions.getUnconfirmedTransactionById(id)
@@ -77,8 +77,8 @@ export default function Transaction() {
     fun();
     return () => clearTimeout(tm.current as NodeJS.Timeout);
   }, [id, forceUpdate]);
-  if (!tx && !loading) {
-    return notFound();
+  if (!id || id.length != 64 || (!tx && !loading)) {
+    return Custom404();
   } else {
     return (
       <TxView

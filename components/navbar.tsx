@@ -13,7 +13,6 @@ import { Button } from "./ui/button";
 import { NETWORK } from "@/lib/network";
 
 async function lookup(str: string) {
-  console.log(str);
   const address = await NETWORK.API()
     .blockchain.getAddressBalanceTotal(str)
     .then((resp) => resp.data)
@@ -39,6 +38,7 @@ async function lookup(str: string) {
     .then((resp) => resp.data)
     .catch(() => {});
   if (block) window.location.href = "/block?id=" + str;
+  else window.location.href = "/nothing";
 }
 
 export function Navbar() {
@@ -46,6 +46,7 @@ export function Navbar() {
   return (
     <NavigationMenu className="w-full mx-auto p-4 border rounded-lg">
       <Image
+        priority={true}
         width={0}
         height={0}
         src="logo.svg"
@@ -77,6 +78,9 @@ export function Navbar() {
       </NavigationMenuList>
       <Input
         onChange={(e) => setSearch(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") lookup(search);
+        }}
         placeholder="Search  for   Address  /  Transaction  /  Token  /  Block"
       />
       <Button onClick={() => lookup(search)} className="ml-4">

@@ -1,10 +1,11 @@
 import { AddressView } from "@/components/view/address-view";
 import { DynamicPagination } from "@/components/dynamic-pagination";
 import { BalanceInfo, IndexedErgoTransaction } from "@/lib/ergo-api";
-import { notFound, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NETWORK } from "@/lib/network";
 import { asIndexedTx, ErgoTreeFromMainNetAddress } from "@/lib/utils";
+import Custom404 from "./404";
 
 export interface TxsResponse {
   items?: IndexedErgoTransaction[];
@@ -24,46 +25,55 @@ export default function Address() {
   const [balance, setBalance] = useState<BalanceResponse>();
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
-    if (!addr) return;
     const fun = async () => {
       NETWORK.API()
         .blockchain.getAddressBalanceTotal(addr)
-        .then((resp) => {
-          setBalance(resp.data);
-          NETWORK.API()
-            .blockchain.getTxsByAddress(addr, {
-              offset: (page - 1) * 30,
-              limit: 30,
-            })
-            .then((resp) => {
-              const confirmed = resp.data;
-              setTxs(confirmed);
-              if (page > 1) setLoading(false);
-              else
-                NETWORK.API()
-                  .transactions.getUnconfirmedTransactionsByErgoTree(
-                    ErgoTreeFromMainNetAddress(addr),
-                    { limit: 100, offset: 0 },
-                  )
-                  .then(async (resp) => {
-                    const unconfirmed = await Promise.all(
-                      resp.data.map(asIndexedTx),
-                    );
-                    setTxs({
-                      items: unconfirmed.concat(
-                        confirmed.items as IndexedErgoTransaction[],
-                      ),
-                      total: (confirmed.total as number) + unconfirmed.length,
-                    });
-                    setLoading(false);
-                  });
-            });
-        });
+        .then(
+          (resp) => {
+            setBalance(resp.data);
+            NETWORK.API()
+              .blockchain.getTxsByAddress(addr, {
+                offset: (page - 1) * 30,
+                limit: 30,
+              })
+              .then(
+                (resp) => {
+                  const confirmed = resp.data;
+                  setTxs(confirmed);
+                  if (page > 1) setLoading(false);
+                  else
+                    NETWORK.API()
+                      .transactions.getUnconfirmedTransactionsByErgoTree(
+                        ErgoTreeFromMainNetAddress(addr),
+                        { limit: 100, offset: 0 },
+                      )
+                      .then(
+                        async (resp) => {
+                          const unconfirmed = await Promise.all(
+                            resp.data.map(asIndexedTx),
+                          );
+                          setTxs({
+                            items: unconfirmed.concat(
+                              confirmed.items as IndexedErgoTransaction[],
+                            ),
+                            total:
+                              (confirmed.total as number) + unconfirmed.length,
+                          });
+                          setLoading(false);
+                        },
+                        () => setLoading(false),
+                      );
+                },
+                () => setLoading(false),
+              );
+          },
+          () => setLoading(false),
+        );
     };
     fun();
   }, [addr, page]);
-  if ((!balance || !txs) && !loading) {
-    return notFound();
+  if (addr.length < 10 || ((!balance || !txs) && !loading)) {
+    return Custom404();
   } else {
     return (
       <div>

@@ -106,9 +106,6 @@ export function PriceView() {
             <SelectValue placeholder="Last day" />
           </SelectTrigger>
           <SelectContent className="rounded-xl">
-            <SelectItem value="21600" className="rounded-lg">
-              Last month
-            </SelectItem>
             <SelectItem value="5040" className="rounded-lg">
               Last week
             </SelectItem>
