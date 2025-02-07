@@ -46,9 +46,10 @@ function RateFromOracleBox(box: ErgoTransactionOutput): number {
   try {
     return (
       1_000_000_000 /
-      (RustModule.SigmaRust.ErgoBox.from_json(JSON.stringify(box))
-        .register_value(6)
-        ?.to_i64()
+      (RustModule.SigmaRust.Constant.decode_from_base16(
+        box.additionalRegisters["R6"],
+      )
+        .to_i64()
         .as_num() as number)
     );
   } catch {

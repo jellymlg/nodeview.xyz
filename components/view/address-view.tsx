@@ -9,6 +9,7 @@ import { TxStatus } from "../widget/tx-status";
 import { feeFromTx } from "@/lib/utils";
 import { TokenInfo, TokenPopover } from "../widget/token-popover";
 import { Skeleton } from "../ui/skeleton";
+import { AddressType } from "../widget/address-type";
 
 interface AddressViewProps {
   address: string;
@@ -148,6 +149,19 @@ export function AddressView({
               ) : (
                 ""
               )}
+            </div>
+          )}
+        </div>
+        <Separator className="m-3" />
+        <div className="flex flex-wrap w-full">
+          <div className="w-1/4 flex content-center flex-wrap">
+            Address type:
+          </div>
+          {loading ? (
+            <Skeleton className="w-3/4" />
+          ) : (
+            <div className="w-3/4 truncate">
+              <AddressType address={address} />
             </div>
           )}
         </div>

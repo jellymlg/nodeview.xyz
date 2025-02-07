@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { Column } from "@tanstack/react-table";
 import { NETWORK } from "./network";
+import { JSX } from "react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -124,4 +125,10 @@ export async function GetNodeInfo(
     height: tmp ? (tmp.fullHeight as number) : 0,
     ping: tmp ? time2 - time1 : Infinity,
   };
+}
+
+export interface TypeSettings {
+  colors: string;
+  icon: JSX.Element;
+  text: string;
 }
