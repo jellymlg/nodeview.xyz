@@ -84,7 +84,7 @@ export function DataTable<TData, TValue>({
                   ))}
                 </TableRow>
               ))
-            : [...Array(10)].map((e, i) => (
+            : [...Array(30)].map((e, i) => (
                 <TableRow key={i}>
                   {[...Array(columns.length)].map((ee, ii) => (
                     <TableCell key={ii}>

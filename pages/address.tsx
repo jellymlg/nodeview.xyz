@@ -26,6 +26,7 @@ export default function Address() {
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     const fun = async () => {
+      setLoading(true);
       NETWORK.API()
         .blockchain.getAddressBalanceTotal(addr)
         .then(

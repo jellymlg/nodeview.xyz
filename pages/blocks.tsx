@@ -67,6 +67,7 @@ export default function Blocks() {
   useEffect(() => {
     if (!num) return;
     const fun = async () => {
+      setBlocks([]);
       NETWORK.API()
         .blockchain.getIndexedHeight()
         .then((resp) => {
