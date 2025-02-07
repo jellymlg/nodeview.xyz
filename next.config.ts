@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     unoptimized: true
   },
   webpack(config) {
-    config.experiments = { ...config.experiments, asyncWebAssembly: true }
+    config.experiments = { ...config.experiments, syncWebAssembly: true }
     return config
 },
 };
