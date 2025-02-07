@@ -1,4 +1,5 @@
 import { ErgoTransactionOutput } from "../ergo-api";
+import { MainNetAddressFromErgoTree } from "../utils";
 import { RustModule } from "../wasm";
 
 interface RosenBridgeTransferRequest {
@@ -17,6 +18,7 @@ export function isRosenTransferRequest(
   const R4 = RustModule.SigmaRust.Constant.decode_from_base16(R4_base16);
   if (R4 && R4.dbg_tpe() === "SColl(SColl(SByte))") {
     const R4Arr = R4.to_coll_coll_byte();
+    if (R4Arr.length != 5) return undefined;
     return {
       toChain: Buffer.from(R4Arr[0]).toString(),
       toAddress: Buffer.from(R4Arr[1]).toString(),
@@ -50,6 +52,7 @@ export function isRosenPayment(
   const R5 = RustModule.SigmaRust.Constant.decode_from_base16(R5_base16);
   if (R5 && R5.dbg_tpe() === "SColl(SColl(SByte))") {
     const R5Arr = R5.to_coll_coll_byte();
+    if (R5Arr.length != 12) return undefined;
     return {
       sourceTx: Buffer.from(R5Arr[0]).toString(),
       fromChain: Buffer.from(R5Arr[1]).toString(),
@@ -65,6 +68,68 @@ export function isRosenPayment(
       sourceBlockHeight: Buffer.from(R5Arr[11]).toString(),
     };
   } else return undefined;
+}
+
+interface RosenBridgeCollateralOperation {
+  type: string;
+  amount: number;
+}
+
+export function isRosenCollateral(
+  inputs: ErgoTransactionOutput[],
+  outputs: ErgoTransactionOutput[],
+): RosenBridgeCollateralOperation | undefined {
+  const inColl = inputs.find((x) =>
+    RosenBridgeAddresses.get(MainNetAddressFromErgoTree(x.ergoTree))?.includes(
+      "Collateral",
+    ),
+  );
+  const outColl = outputs.find((x) =>
+    RosenBridgeAddresses.get(MainNetAddressFromErgoTree(x.ergoTree))?.includes(
+      "Collateral",
+    ),
+  );
+  if (inColl && outColl) {
+    if (!inColl.additionalRegisters["R5"] || !outColl.additionalRegisters["R5"])
+      return undefined;
+    const inAmount = RustModule.SigmaRust.Constant.decode_from_base16(
+      inColl.additionalRegisters["R5"],
+    )
+      .to_i64()
+      .as_num();
+    const outAmount = RustModule.SigmaRust.Constant.decode_from_base16(
+      outColl.additionalRegisters["R5"],
+    )
+      .to_i64()
+      .as_num();
+    if (inAmount < outAmount) {
+      return { type: "Add collateral", amount: outAmount - inAmount };
+    } else {
+      return {
+        type: "Unlock partial collateral",
+        amount: inAmount - outAmount,
+      };
+    }
+  }
+  if (inColl && !outColl) {
+    if (!inColl.additionalRegisters["R5"]) return undefined;
+    const inAmount = RustModule.SigmaRust.Constant.decode_from_base16(
+      inColl.additionalRegisters["R5"],
+    )
+      .to_i64()
+      .as_num();
+    return { type: "Unlock all collateral", amount: inAmount };
+  }
+  if (!inColl && outColl) {
+    if (!outColl.additionalRegisters["R5"]) return undefined;
+    const outAmount = RustModule.SigmaRust.Constant.decode_from_base16(
+      outColl.additionalRegisters["R5"],
+    )
+      .to_i64()
+      .as_num();
+    return { type: "Lock collateral", amount: outAmount };
+  }
+  return undefined;
 }
 
 export const RosenBridgeAddresses: Map<string, string> = new Map([

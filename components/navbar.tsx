@@ -17,28 +17,43 @@ async function lookup(str: string) {
     .blockchain.getAddressBalanceTotal(str)
     .then((resp) => resp.data)
     .catch(() => {});
-  if (address) window.location.href = "/address?id=" + str;
+  if (address) {
+    window.location.href = "/address?id=" + str;
+    return;
+  }
   const txMem = await NETWORK.API()
     .transactions.getUnconfirmedTransactionById(str)
     .then((resp) => resp.data)
     .catch(() => {});
-  if (txMem) window.location.href = "/tx?id=" + str;
+  if (txMem) {
+    window.location.href = "/tx?id=" + str;
+    return;
+  }
   const txConf = await NETWORK.API()
     .blockchain.getTxById(str)
     .then((resp) => resp.data)
     .catch(() => {});
-  if (txConf) window.location.href = "/tx?id=" + str;
+  if (txConf) {
+    window.location.href = "/tx?id=" + str;
+    return;
+  }
   const token = await NETWORK.API()
     .blockchain.getTokenById(str)
     .then((resp) => resp.data)
     .catch(() => {});
-  if (token) window.location.href = "/token?id=" + str;
+  if (token) {
+    window.location.href = "/token?id=" + str;
+    return;
+  }
   const block = await NETWORK.API()
     .blocks.getBlockHeaderById(str)
     .then((resp) => resp.data)
     .catch(() => {});
-  if (block) window.location.href = "/block?id=" + str;
-  else window.location.href = "/nothing";
+  if (block) {
+    window.location.href = "/block?id=" + str;
+    return;
+  }
+  window.location.href = "/nothing";
 }
 
 export function Navbar() {

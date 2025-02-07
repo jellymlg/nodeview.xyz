@@ -6,6 +6,7 @@ import { ArrowLeftRightIcon } from "lucide-react";
 import { ErgoDexContractTemplates } from "@/lib/constants/ErgoDex";
 import { TypeSettings } from "@/lib/utils";
 import {
+  isRosenCollateral,
   isRosenPayment,
   isRosenTransferRequest,
 } from "@/lib/constants/RosenBridge";
@@ -40,7 +41,8 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
   const rosenTransfer = outputs.map(isRosenTransferRequest).find((x) => x);
   const rosenPayment = inputs.map(isRosenPayment).find((x) => x);
   const rosenTrigger = outputs.map(isRosenPayment).find((x) => x);
-  if (rosenTransfer || rosenPayment || rosenTrigger)
+  const rosenCollateral = isRosenCollateral(inputs, outputs);
+  if (rosenCollateral || rosenTransfer || rosenPayment || rosenTrigger)
     return {
       colors: "bg-indigo-600 border-indigo-600 text-indigo-200",
       icon: (
@@ -59,10 +61,12 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
             rosenPayment.fromChain +
             " to " +
             rosenPayment.toChain
-          : "Trigger from " +
-            rosenTrigger?.fromChain +
-            " to " +
-            rosenTrigger?.toChain,
+          : rosenTrigger
+            ? "Trigger from " +
+              rosenTrigger.fromChain +
+              " to " +
+              rosenTrigger.toChain
+            : (rosenCollateral?.type as string),
     };
   // no special type detected
   return {
