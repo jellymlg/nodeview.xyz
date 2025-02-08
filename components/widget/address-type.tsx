@@ -1,9 +1,10 @@
 import { ErgoDexAddresses } from "@/lib/constants/ErgoDex";
 import { TypeSettings } from "@/lib/utils";
-import { SigmaIcon } from "lucide-react";
+import { PickaxeIcon, SigmaIcon } from "lucide-react";
 import { ErgoDexIcon } from "./ergodex-icon";
 import { RosenBridgeAddresses } from "@/lib/constants/RosenBridge";
 import Image from "next/image";
+import { MiningPoolAddresses } from "@/lib/constants/MiningPools";
 
 interface AddressTypeProps {
   address: string;
@@ -33,6 +34,13 @@ function deduceType({ address }: AddressTypeProps): TypeSettings {
         />
       ),
       text: rosenbridgeAddress,
+    };
+  const minigpoolAddress = MiningPoolAddresses.get(address);
+  if (minigpoolAddress)
+    return {
+      colors: "bg-red-600 border-red-600 text-red-300",
+      icon: <PickaxeIcon width={20} height={20} />,
+      text: minigpoolAddress,
     };
   // no special type detected
   return {

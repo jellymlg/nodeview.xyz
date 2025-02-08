@@ -2,7 +2,7 @@ import { ErgoTransactionOutput } from "@/lib/ergo-api";
 import { toHex } from "@/lib/hex";
 import { RustModule } from "@/lib/wasm";
 import { ErgoDexIcon } from "./ergodex-icon";
-import { ArrowLeftRightIcon } from "lucide-react";
+import { ArrowLeftRightIcon, PickaxeIcon } from "lucide-react";
 import { ErgoDexContractTemplates } from "@/lib/constants/ErgoDex";
 import { TypeSettings } from "@/lib/utils";
 import {
@@ -67,6 +67,13 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
               " to " +
               rosenTrigger.toChain
             : (rosenCollateral?.type as string),
+    };
+  const blockReward = template(outputs[0]) === "ea02d192a39a8cc7a70173007301";
+  if (blockReward)
+    return {
+      colors: "bg-red-600 border-red-600 text-red-300",
+      icon: <PickaxeIcon width={20} height={20} />,
+      text: "Block reward",
     };
   // no special type detected
   return {
