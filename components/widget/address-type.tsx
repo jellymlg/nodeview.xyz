@@ -5,6 +5,7 @@ import { ErgoDexIcon } from "./ergodex-icon";
 import { RosenBridgeAddresses } from "@/lib/constants/RosenBridge";
 import Image from "next/image";
 import { MiningPoolAddresses } from "@/lib/constants/MiningPools";
+import { SigmaUSDBank } from "@/lib/constants/SigmaUSD";
 
 interface AddressTypeProps {
   address: string;
@@ -34,6 +35,20 @@ function deduceType({ address }: AddressTypeProps): TypeSettings {
         />
       ),
       text: rosenbridgeAddress,
+    };
+  const sigusdBank = address === SigmaUSDBank ? "SigmaUSD Bank" : undefined;
+  if (sigusdBank)
+    return {
+      colors: "bg-purple-600 border-purple-600 text-purple-200",
+      icon: (
+        <Image
+          width={20}
+          height={20}
+          src={"sigusd.svg"}
+          alt={"sigmausd logo"}
+        />
+      ),
+      text: sigusdBank,
     };
   const minigpoolAddress = MiningPoolAddresses.get(address);
   if (minigpoolAddress)

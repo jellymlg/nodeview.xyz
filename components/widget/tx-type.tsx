@@ -11,6 +11,7 @@ import {
   isRosenTransferRequest,
 } from "@/lib/constants/RosenBridge";
 import Image from "next/image";
+import { isSigmaUSDSwap } from "@/lib/constants/SigmaUSD";
 
 function template(box: ErgoTransactionOutput): string {
   return toHex(
@@ -67,6 +68,21 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
               " to " +
               rosenTrigger.toChain
             : (rosenCollateral?.type as string),
+    };
+  const sigmausdSwap = isSigmaUSDSwap(inputs[0], outputs[0]);
+  if (sigmausdSwap)
+    return {
+      colors: "bg-purple-600 border-purple-600 text-purple-200",
+      icon: (
+        <Image
+          priority={true}
+          width={20}
+          height={20}
+          src={"sigusd.svg"}
+          alt={"sigmausd logo"}
+        />
+      ),
+      text: sigmausdSwap.type,
     };
   const blockReward = template(outputs[0]) === "ea02d192a39a8cc7a70173007301";
   if (blockReward)
