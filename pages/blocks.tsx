@@ -22,7 +22,7 @@ export const BlockColumns: ColumnDef<FullBlock>[] = [
     cell: ({ row }) => {
       return (
         <Link
-          className="text-primary underline"
+          className="text-primary hover:underline"
           href={"../block?id=" + row.original.header.id}
         >
           {row.original.header.id}

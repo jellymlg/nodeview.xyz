@@ -29,12 +29,28 @@ export const IndexedTxColumns: ColumnDef<IndexedErgoTransaction>[] = [
     },
   },
   {
+    accessorKey: "inclusionHeight",
+    header: "Block",
+    cell: ({ row }) => {
+      return row.original.timestamp > 0 ? (
+        <Link
+          className="text-primary hover:underline"
+          href={"../block?id=" + row.original.blockId}
+        >
+          {row.original.inclusionHeight}
+        </Link>
+      ) : (
+        "-"
+      );
+    },
+  },
+  {
     accessorKey: "id",
     header: "Transaction Hash",
     cell: ({ row }) => {
       return (
         <Link
-          className="text-primary underline"
+          className="text-primary hover:underline"
           href={"tx?id=" + row.original.id}
         >
           {row.original.id}
