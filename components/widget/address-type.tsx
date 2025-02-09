@@ -1,5 +1,8 @@
-import { ErgoDexAddresses } from "@/lib/constants/ErgoDex";
-import { TypeSettings } from "@/lib/utils";
+import {
+  ErgoDexAddresses,
+  ErgoDexContractTemplates,
+} from "@/lib/constants/ErgoDex";
+import { templateFromAddress, TypeSettings } from "@/lib/utils";
 import { PickaxeIcon, SigmaIcon } from "lucide-react";
 import { ErgoDexIcon } from "./ergodex-icon";
 import { RosenBridgeAddresses } from "@/lib/constants/RosenBridge";
@@ -14,12 +17,15 @@ interface AddressTypeProps {
 function deduceType({ address }: AddressTypeProps): TypeSettings {
   // check ErgoDex addresses
   const ergodexAddress = ErgoDexAddresses.get(address);
-  if (ergodexAddress)
+  const ergodexProxy = ErgoDexContractTemplates.get(
+    templateFromAddress(address),
+  );
+  if (ergodexAddress || ergodexProxy)
     return {
       colors:
         "bg-orange-700 border-orange-700 text-orange-700 dark:text-orange-400 fill-orange-700 dark:fill-orange-400 stroke-orange-700 dark:stroke-orange-400",
       icon: <ErgoDexIcon width={20} height={20} />,
-      text: ergodexAddress,
+      text: (ergodexAddress ?? ergodexProxy) as string,
     };
   // check Rosen Bridge addresses
   const rosenbridgeAddress = RosenBridgeAddresses.get(address);

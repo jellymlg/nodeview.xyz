@@ -2,7 +2,6 @@ import { TxView } from "@/components/view/tx-view";
 import {
   Asset,
   ErgoTransaction,
-  ErgoTransactionOutput,
   IndexedErgoBox,
   IndexedErgoTransaction,
   IndexedToken,
@@ -12,11 +11,12 @@ import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 import Custom404 from "./404";
+import { asIndexedBox } from "@/lib/utils";
 
 export default function Transaction() {
   const id: string = useSearchParams().get("id") as string;
   const [tx, setTx] = useState<ErgoTransaction | IndexedErgoTransaction>();
-  const inputs = useRef<(ErgoTransactionOutput | IndexedErgoBox)[]>([]);
+  const inputs = useRef<IndexedErgoBox[]>([]);
   const tokens = useRef<IndexedToken[]>([]);
   const tm = useRef<NodeJS.Timeout>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -32,10 +32,10 @@ export default function Transaction() {
             if (inputs.current.length == 0) {
               inputs.current = await NETWORK.API()
                 .utxo.getBoxWithPoolByIds(resp.data.inputs.map((x) => x.boxId))
-                .then((resp) => resp.data);
+                .then((resp) => resp.data.map(asIndexedBox));
               tokens.current = await NETWORK.API()
                 .blockchain.getTokensByIds(
-                  (inputs.current as (ErgoTransactionOutput | IndexedErgoBox)[])
+                  inputs.current
                     .flatMap((x) => x.assets as Asset[])
                     .concat(
                       resp.data.outputs.flatMap((y) => y.assets as Asset[]),

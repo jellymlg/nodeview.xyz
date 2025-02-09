@@ -6,7 +6,11 @@ import {
   IndexedErgoTransaction,
   IndexedToken,
 } from "@/lib/ergo-api";
-import { feeFromTx, MainNetAddressFromErgoTree } from "@/lib/utils";
+import {
+  asIndexedBox,
+  feeFromTx,
+  MainNetAddressFromErgoTree,
+} from "@/lib/utils";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
 import { TxStatus } from "../widget/tx-status";
@@ -53,7 +57,7 @@ function makeBoxRow(
 
 interface TxViewProps {
   tx: ErgoTransaction | IndexedErgoTransaction;
-  inputs: ErgoTransactionOutput[] | IndexedErgoBox[];
+  inputs: IndexedErgoBox[];
   tokens: IndexedToken[];
   loading: boolean;
 }
@@ -160,7 +164,12 @@ export function TxView({ tx, inputs, tokens, loading }: TxViewProps) {
             <Skeleton className="w-3/4" />
           ) : (
             <div className="w-3/4 truncate">
-              <TxType inputs={inputs} outputs={tx.outputs} />
+              <TxType
+                inputs={inputs}
+                outputs={
+                  "index" in tx ? tx.outputs : tx.outputs.map(asIndexedBox)
+                }
+              />
             </div>
           )}
         </div>

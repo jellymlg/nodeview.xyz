@@ -61,7 +61,7 @@ export function MakeSortButton<TColumn>(column: Column<TColumn>, text: string) {
   );
 }
 
-function asIndexedBox(box: ErgoTransactionOutput): IndexedErgoBox {
+export function asIndexedBox(box: ErgoTransactionOutput): IndexedErgoBox {
   return {
     ...box,
     address: MainNetAddressFromErgoTree(box.ergoTree),
@@ -131,4 +131,28 @@ export interface TypeSettings {
   colors: string;
   icon: JSX.Element;
   text: string;
+}
+
+export function fromHex(s: string): Uint8Array {
+  return Uint8Array.from(Buffer.from(s, "hex"));
+}
+
+export function toHex(arr: Uint8Array): string {
+  return Buffer.from(arr).toString("hex");
+}
+
+export function templateFromBox(box: ErgoTransactionOutput): string {
+  return toHex(
+    RustModule.SigmaRust.ErgoTree.from_base16_bytes(
+      box.ergoTree,
+    ).template_bytes(),
+  );
+}
+
+export function templateFromAddress(address: string): string {
+  return toHex(
+    RustModule.SigmaRust.Address.from_base58(address)
+      .to_ergo_tree()
+      .template_bytes(),
+  );
 }

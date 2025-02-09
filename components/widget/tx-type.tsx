@@ -1,10 +1,8 @@
-import { ErgoTransactionOutput } from "@/lib/ergo-api";
-import { toHex } from "@/lib/hex";
-import { RustModule } from "@/lib/wasm";
+import { IndexedErgoBox } from "@/lib/ergo-api";
 import { ErgoDexIcon } from "./ergodex-icon";
 import { ArrowLeftRightIcon, PickaxeIcon } from "lucide-react";
 import { ErgoDexContractTemplates } from "@/lib/constants/ErgoDex";
-import { TypeSettings } from "@/lib/utils";
+import { templateFromBox, TypeSettings } from "@/lib/utils";
 import {
   isRosenCollateral,
   isRosenPayment,
@@ -13,21 +11,13 @@ import {
 import Image from "next/image";
 import { isSigmaUSDSwap } from "@/lib/constants/SigmaUSD";
 
-function template(box: ErgoTransactionOutput): string {
-  return toHex(
-    RustModule.SigmaRust.ErgoTree.from_base16_bytes(
-      box.ergoTree,
-    ).template_bytes(),
-  );
-}
-
 function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
   // check ErgoDex contracts
   const settledOrder = inputs
-    .map((x) => ErgoDexContractTemplates.get(template(x)))
+    .map((x) => ErgoDexContractTemplates.get(templateFromBox(x)))
     .find((x) => x);
   const submittedOrder = outputs
-    .map((x) => ErgoDexContractTemplates.get(template(x)))
+    .map((x) => ErgoDexContractTemplates.get(templateFromBox(x)))
     .find((x) => x);
   if (settledOrder || submittedOrder)
     return {
@@ -84,7 +74,8 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
       ),
       text: sigmausdSwap.type,
     };
-  const blockReward = template(outputs[0]) === "ea02d192a39a8cc7a70173007301";
+  const blockReward =
+    templateFromBox(outputs[0]) === "ea02d192a39a8cc7a70173007301";
   if (blockReward)
     return {
       colors: "bg-red-600 border-red-600 text-red-300",
@@ -100,8 +91,8 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
 }
 
 interface TxTypeProps {
-  inputs: ErgoTransactionOutput[];
-  outputs: ErgoTransactionOutput[];
+  inputs: IndexedErgoBox[];
+  outputs: IndexedErgoBox[];
 }
 
 export function TxType({ inputs, outputs }: TxTypeProps) {

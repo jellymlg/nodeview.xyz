@@ -1,5 +1,4 @@
-import { ErgoTransactionOutput } from "../ergo-api";
-import { MainNetAddressFromErgoTree } from "../utils";
+import { IndexedErgoBox } from "../ergo-api";
 import { RustModule } from "../wasm";
 
 export const SigmaUSDBank: string =
@@ -12,13 +11,10 @@ interface SigmaUSDSwap {
 }
 
 export function isSigmaUSDSwap(
-  input0: ErgoTransactionOutput,
-  output0: ErgoTransactionOutput,
+  input0: IndexedErgoBox,
+  output0: IndexedErgoBox,
 ): SigmaUSDSwap | undefined {
-  if (
-    MainNetAddressFromErgoTree(input0.ergoTree) !== SigmaUSDBank ||
-    MainNetAddressFromErgoTree(output0.ergoTree) !== SigmaUSDBank
-  )
+  if (input0.address !== SigmaUSDBank || output0.address !== SigmaUSDBank)
     return undefined;
   const inUSD = RustModule.SigmaRust.Constant.decode_from_base16(
     input0.additionalRegisters["R4"],

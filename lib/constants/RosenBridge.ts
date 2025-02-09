@@ -1,5 +1,4 @@
-import { ErgoTransactionOutput } from "../ergo-api";
-import { MainNetAddressFromErgoTree } from "../utils";
+import { ErgoTransactionOutput, IndexedErgoBox } from "../ergo-api";
 import { RustModule } from "../wasm";
 
 interface RosenBridgeTransferRequest {
@@ -76,18 +75,14 @@ interface RosenBridgeCollateralOperation {
 }
 
 export function isRosenCollateral(
-  inputs: ErgoTransactionOutput[],
-  outputs: ErgoTransactionOutput[],
+  inputs: IndexedErgoBox[],
+  outputs: IndexedErgoBox[],
 ): RosenBridgeCollateralOperation | undefined {
   const inColl = inputs.find((x) =>
-    RosenBridgeAddresses.get(MainNetAddressFromErgoTree(x.ergoTree))?.includes(
-      "Collateral",
-    ),
+    RosenBridgeAddresses.get(x.address)?.includes("Collateral"),
   );
   const outColl = outputs.find((x) =>
-    RosenBridgeAddresses.get(MainNetAddressFromErgoTree(x.ergoTree))?.includes(
-      "Collateral",
-    ),
+    RosenBridgeAddresses.get(x.address)?.includes("Collateral"),
   );
   if (inColl && outColl) {
     if (!inColl.additionalRegisters["R5"] || !outColl.additionalRegisters["R5"])
