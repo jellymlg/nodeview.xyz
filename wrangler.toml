@@ -3,9 +3,6 @@ main = "worker.js"
 workers_dev = true
 compatibility_date = "2025-01-01"
 
-kv_namespaces = [
-  { binding = "__nodeview-xyz-workers_sites_assets", id = "b0d00d7d58c8468ebed82911c02c58b9" }
-]
-
-[site]
-bucket = "./out"
+[assets]
+directory = "./out"
+binding = "ASSETS"
