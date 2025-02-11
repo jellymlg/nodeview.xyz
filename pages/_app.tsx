@@ -11,17 +11,17 @@ import { NETWORK } from "@/lib/network";
 export default function App({ Component, pageProps }: AppProps) {
   const [isRustModuleLoaded, setIsRustModuleLoaded] = useState(false);
   useEffect(() => {
+    const httpsTokens = /^https:\/\/(.*)$/.exec(window.location.href);
+    if (httpsTokens) {
+      const newURL = "http://" + httpsTokens[1];
+      console.log(newURL);
+      window.location.href = newURL;
+    }
     RustModule.load().then(() => setIsRustModuleLoaded(true));
     NETWORK.init(localStorage);
   }, []);
   if (!isRustModuleLoaded) {
     return null;
-  }
-  const httpsTokens = /^https:\/\/(.*)$/.exec(window.location.href);
-  if (httpsTokens) {
-    const newURL = "http://" + httpsTokens[1];
-    console.log(newURL);
-    window.open(newURL, "_blank")?.focus();
   }
   return (
     <ThemeProvider
