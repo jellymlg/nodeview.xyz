@@ -19,7 +19,9 @@ export default function App({ Component, pageProps }: AppProps) {
   }
   const httpsTokens = /^https:\/\/(.*)$/.exec(window.location.href);
   if (httpsTokens) {
-    window.location.replace("http://" + httpsTokens[1]);
+    const newURL = "http://" + httpsTokens[1];
+    console.log(newURL);
+    window.location.replace(newURL);
   }
   return (
     <ThemeProvider
