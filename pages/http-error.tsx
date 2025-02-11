@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export function HttpError() {
+export default function HttpError() {
   return (
     <div className="flex justify-center items-center">
       <Link
