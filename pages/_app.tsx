@@ -11,11 +11,13 @@ import { NETWORK } from "@/lib/network";
 export default function App({ Component, pageProps }: AppProps) {
   const [isRustModuleLoaded, setIsRustModuleLoaded] = useState(false);
   useEffect(() => {
-    const httpsTokens = /^https:\/\/(.*)$/.exec(window.location.href);
-    if (httpsTokens) {
-      const newURL = "http://" + httpsTokens[1];
-      console.log(newURL);
-      window.location.href = newURL;
+    if (typeof window !== "undefined") {
+      if (window.location.protocol === "https:") {
+        const newUrl = window.location.href.replace("https://", "http://");
+        if (!document.referrer.includes(newUrl)) {
+          window.location.replace(newUrl);
+        }
+      }
     }
     RustModule.load().then(() => setIsRustModuleLoaded(true));
     NETWORK.init(localStorage);
