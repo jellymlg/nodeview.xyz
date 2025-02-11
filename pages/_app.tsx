@@ -21,7 +21,7 @@ export default function App({ Component, pageProps }: AppProps) {
   if (httpsTokens) {
     const newURL = "http://" + httpsTokens[1];
     console.log(newURL);
-    window.location.href = newURL;
+    window.open(newURL, "_blank")?.focus();
   }
   return (
     <ThemeProvider
