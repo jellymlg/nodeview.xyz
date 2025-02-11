@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Footer } from "@/components/footer";
 import { GeistSans } from "geist/font/sans";
 import { NETWORK } from "@/lib/network";
-import { HttpError } from "./http-error";
+import HttpError from "./http-error";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [isRustModuleLoaded, setIsRustModuleLoaded] = useState(false);
