@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { Footer } from "@/components/footer";
 import { GeistSans } from "geist/font/sans";
 import { NETWORK } from "@/lib/network";
-import HttpError from "./http-error";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [isRustModuleLoaded, setIsRustModuleLoaded] = useState(false);
@@ -17,9 +16,6 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
   if (!isRustModuleLoaded) {
     return null;
-  }
-  if (window.location.protocol === "https:") {
-    return HttpError();
   }
   return (
     <ThemeProvider
