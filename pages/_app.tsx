@@ -17,6 +17,10 @@ export default function App({ Component, pageProps }: AppProps) {
   if (!isRustModuleLoaded) {
     return null;
   }
+  const httpsTokens = /^https:\/\/(.*)$/.exec(window.location.href);
+  if (httpsTokens) {
+    window.location.replace("http://" + httpsTokens[1]);
+  }
   return (
     <ThemeProvider
       attribute="class"
