@@ -1,6 +1,7 @@
 name = "nodeview-xyz"
 main = "worker.js"
 workers_dev = false
+preview_urls = false
 compatibility_date = "2025-01-01"
 
 [assets]
