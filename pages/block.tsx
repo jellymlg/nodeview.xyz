@@ -4,14 +4,18 @@ import { NETWORK } from "@/lib/network";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Custom404 from "./404";
+import { RustModule } from "@/lib/wasm";
 
 export default function Block() {
-  document.title = "NodeView | Block";
   const id: string = useSearchParams().get("id") as string;
   const [block, setBlock] = useState<FullBlock>();
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
+    document.title = "NodeView | Block";
+    if (!id) return;
     const fun = async () => {
+      setLoading(true);
+      await RustModule.load();
       NETWORK.API()
         .blocks.getFullBlockById(id)
         .then(
@@ -24,7 +28,7 @@ export default function Block() {
     };
     fun();
   }, [id]);
-  if (!id || id.length != 64 || (!block && !loading)) {
+  if (!block && !loading) {
     return Custom404();
   } else {
     return <BlockView block={block as FullBlock} loading={loading} />;

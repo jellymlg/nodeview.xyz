@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { NETWORK } from "@/lib/network";
 import { asIndexedTx, ErgoTreeFromMainNetAddress } from "@/lib/utils";
 import Custom404 from "./404";
+import { RustModule } from "@/lib/wasm";
 
 export interface TxsResponse {
   items?: IndexedErgoTransaction[];
@@ -18,15 +19,17 @@ export interface BalanceResponse {
 }
 
 export default function Address() {
-  document.title = "NodeView | Address";
   const addr: string = useSearchParams().get("id") as string;
   const page: number = parseInt(useSearchParams().get("page") ?? "1");
   const [txs, setTxs] = useState<TxsResponse>();
   const [balance, setBalance] = useState<BalanceResponse>();
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
+    document.title = "NodeView | Address";
+    if (!addr) return;
     const fun = async () => {
       setLoading(true);
+      await RustModule.load();
       NETWORK.API()
         .blockchain.getAddressBalanceTotal(addr)
         .then(
@@ -73,7 +76,7 @@ export default function Address() {
     };
     fun();
   }, [addr, page]);
-  if (addr.length < 10 || ((!balance || !txs) && !loading)) {
+  if ((!balance || !txs) && !loading) {
     return Custom404();
   } else {
     return (

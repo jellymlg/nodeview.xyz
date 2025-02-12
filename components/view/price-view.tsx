@@ -175,6 +175,7 @@ export function PriceView() {
                 fill="url(#fillPrice)"
                 stroke="var(--color-price)"
                 stackId="a"
+                isAnimationActive={false}
               />
               <ChartLegend content={<ChartLegendContent />} />
             </AreaChart>

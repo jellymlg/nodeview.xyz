@@ -61,10 +61,10 @@ export const BlockColumns: ColumnDef<FullBlock>[] = [
 ];
 
 export default function Blocks() {
-  document.title = "NodeView | Blocks";
   const num: number = parseInt(useSearchParams().get("page") as string);
   const [blocks, setBlocks] = useState<FullBlock[]>([]);
   useEffect(() => {
+    document.title = "NodeView | Blocks";
     if (!num) return;
     const fun = async () => {
       setBlocks([]);

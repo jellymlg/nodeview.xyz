@@ -11,6 +11,7 @@ export default function Token() {
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     document.title = "NodeView | Token";
+    if (!id) return;
     const fun = async () => {
       NETWORK.API()
         .blockchain.getTokenById(id)
@@ -24,7 +25,7 @@ export default function Token() {
     };
     fun();
   }, [id]);
-  if (!id || id.length != 64 || (!token && !loading)) {
+  if (!token && !loading) {
     return Custom404();
   } else {
     return <TokenView token={token as IndexedToken} loading={loading} />;

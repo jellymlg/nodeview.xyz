@@ -12,6 +12,7 @@ import React from "react";
 import { useEffect, useRef, useState } from "react";
 import Custom404 from "./404";
 import { asIndexedBox } from "@/lib/utils";
+import { RustModule } from "@/lib/wasm";
 
 export default function Transaction() {
   const id: string = useSearchParams().get("id") as string;
@@ -23,7 +24,9 @@ export default function Transaction() {
   const forceUpdate = React.useReducer(() => ({}), {})[1] as () => void;
   useEffect(() => {
     document.title = "NodeView | Transaction";
+    if (!id) return;
     const fun = async () => {
+      await RustModule.load();
       NETWORK.API()
         .transactions.getUnconfirmedTransactionById(id)
         .then(
@@ -77,7 +80,7 @@ export default function Transaction() {
     fun();
     return () => clearTimeout(tm.current as NodeJS.Timeout);
   }, [id, forceUpdate]);
-  if (!id || id.length != 64 || (!tx && !loading)) {
+  if (!tx && !loading) {
     return Custom404();
   } else {
     return (

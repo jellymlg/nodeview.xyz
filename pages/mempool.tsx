@@ -84,9 +84,9 @@ export const TxColumns: ColumnDef<ErgoTransaction>[] = [
 ];
 
 export default function Mempool() {
-  document.title = "NodeView | Mempool";
   const [txs, setTxs] = useState<Transactions>([]);
   useEffect(() => {
+    document.title = "NodeView | Mempool";
     const fun = async () => {
       NETWORK.API()
         .transactions.getUnconfirmedTransactions({ limit: 200 })
