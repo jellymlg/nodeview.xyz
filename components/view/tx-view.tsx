@@ -15,7 +15,7 @@ import Link from "next/link";
 import { Separator } from "../ui/separator";
 import { TxStatus } from "../widget/tx-status";
 import { TxType } from "../widget/tx-type";
-import { TokenInfo, TokenPopover } from "../widget/token-popover";
+import { TokenInfo, TokenPopover } from "../popup/token-popover";
 import { Skeleton } from "../ui/skeleton";
 
 function makeBoxRow(

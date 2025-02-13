@@ -25,6 +25,8 @@ function deduceType({ address }: AddressTypeProps): TypeSettings {
       colors:
         "bg-orange-700 border-orange-700 text-orange-700 dark:text-orange-400 fill-orange-700 dark:fill-orange-400 stroke-orange-700 dark:stroke-orange-400",
       icon: <ErgoDexIcon width={20} height={20} />,
+      wrapper: (x) => x,
+      props: [],
       text: (ergodexAddress ?? ergodexProxy) as string,
     };
   // check Rosen Bridge addresses
@@ -40,6 +42,8 @@ function deduceType({ address }: AddressTypeProps): TypeSettings {
           alt={"rosen bridge logo"}
         />
       ),
+      wrapper: (x) => x,
+      props: [],
       text: rosenbridgeAddress,
     };
   const sigusdBank = address === SigmaUSDBank ? "SigmaUSD Bank" : undefined;
@@ -54,6 +58,8 @@ function deduceType({ address }: AddressTypeProps): TypeSettings {
           alt={"sigmausd logo"}
         />
       ),
+      wrapper: (x) => x,
+      props: [],
       text: sigusdBank,
     };
   const minigpoolAddress = MiningPoolAddresses.get(address);
@@ -61,12 +67,16 @@ function deduceType({ address }: AddressTypeProps): TypeSettings {
     return {
       colors: "bg-red-600 border-red-600 text-red-300",
       icon: <PickaxeIcon width={20} height={20} />,
+      wrapper: (x) => x,
+      props: [],
       text: minigpoolAddress,
     };
   // no special type detected
   return {
     colors: "bg-blue-600 border-blue-600 text-blue-900 dark:text-blue-300",
     icon: <SigmaIcon width={20} height={20} />,
+    wrapper: (x) => x,
+    props: [],
     text: "Personal",
   };
 }

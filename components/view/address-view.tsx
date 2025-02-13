@@ -7,7 +7,7 @@ import Link from "next/link";
 import { TxType } from "../widget/tx-type";
 import { TxStatus } from "../widget/tx-status";
 import { feeFromTx } from "@/lib/utils";
-import { TokenInfo, TokenPopover } from "../widget/token-popover";
+import { TokenInfo, TokenPopover } from "../popup/token-popover";
 import { Skeleton } from "../ui/skeleton";
 import { AddressType } from "../widget/address-type";
 

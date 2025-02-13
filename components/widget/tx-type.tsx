@@ -10,6 +10,9 @@ import {
 } from "@/lib/constants/RosenBridge";
 import Image from "next/image";
 import { isSigmaUSDSwap } from "@/lib/constants/SigmaUSD";
+import { RosenPopover } from "../popup/rosen-popover";
+import { SigmaUSDPopover } from "../popup/sigusd-popover";
+import { ErgoDexPopover } from "../popup/ergodex-popover";
 
 function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
   // check ErgoDex contracts
@@ -24,6 +27,8 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
       colors:
         "bg-orange-700 border-orange-700 text-orange-700 dark:text-orange-400 fill-orange-700 dark:fill-orange-400 stroke-orange-700 dark:stroke-orange-400",
       icon: <ErgoDexIcon width={20} height={20} />,
+      wrapper: ErgoDexPopover,
+      props: [settledOrder, submittedOrder],
       text:
         (settledOrder ?? submittedOrder) +
         (settledOrder ? " settled" : " submitted"),
@@ -33,7 +38,20 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
   const rosenPayment = inputs.map(isRosenPayment).find((x) => x);
   const rosenTrigger = outputs.map(isRosenPayment).find((x) => x);
   const rosenCollateral = isRosenCollateral(inputs, outputs);
-  if (rosenCollateral || rosenTransfer || rosenPayment || rosenTrigger)
+  if (rosenCollateral || rosenTransfer || rosenPayment || rosenTrigger) {
+    const text = rosenTransfer
+      ? "Transfer request to " + rosenTransfer.toChain
+      : rosenPayment
+        ? "Transfer from " +
+          rosenPayment.fromChain +
+          " to " +
+          rosenPayment.toChain
+        : rosenTrigger
+          ? "Trigger from " +
+            rosenTrigger.fromChain +
+            " to " +
+            rosenTrigger.toChain
+          : (rosenCollateral?.type as string);
     return {
       colors: "bg-indigo-600 border-indigo-600 text-indigo-200",
       icon: (
@@ -45,20 +63,11 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
           alt={"rosen bridge logo"}
         />
       ),
-      text: rosenTransfer
-        ? "Transfer request to " + rosenTransfer.toChain
-        : rosenPayment
-          ? "Transfer from " +
-            rosenPayment.fromChain +
-            " to " +
-            rosenPayment.toChain
-          : rosenTrigger
-            ? "Trigger from " +
-              rosenTrigger.fromChain +
-              " to " +
-              rosenTrigger.toChain
-            : (rosenCollateral?.type as string),
+      wrapper: RosenPopover,
+      props: [rosenTransfer, rosenPayment, rosenTrigger, rosenCollateral, text],
+      text: text,
     };
+  }
   const sigmausdSwap = isSigmaUSDSwap(inputs[0], outputs[0]);
   if (sigmausdSwap)
     return {
@@ -72,7 +81,9 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
           alt={"sigmausd logo"}
         />
       ),
-      text: sigmausdSwap.type,
+      wrapper: SigmaUSDPopover,
+      props: [sigmausdSwap],
+      text: "Swap " + sigmausdSwap.inType + " to " + sigmausdSwap.outType,
     };
   const blockReward =
     templateFromBox(outputs[0]) === "ea02d192a39a8cc7a70173007301";
@@ -80,12 +91,16 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
     return {
       colors: "bg-red-600 border-red-600 text-red-300",
       icon: <PickaxeIcon width={20} height={20} />,
+      wrapper: (x) => x,
+      props: [],
       text: "Block reward",
     };
   // no special type detected
   return {
     colors: "bg-blue-600 border-blue-600 text-blue-900 dark:text-blue-300",
     icon: <ArrowLeftRightIcon width={20} height={20} />,
+    wrapper: (x) => x,
+    props: [],
     text: "Transfer",
   };
 }
@@ -97,7 +112,7 @@ interface TxTypeProps {
 
 export function TxType({ inputs, outputs }: TxTypeProps) {
   const type = deduceType({ inputs, outputs });
-  return (
+  const content = (
     <div
       className={
         "flex items-center bg-opacity-50 border rounded-lg w-fit p-1 " +
@@ -108,4 +123,5 @@ export function TxType({ inputs, outputs }: TxTypeProps) {
       <span className="text-sm pl-1">{type.text}</span>
     </div>
   );
+  return type.wrapper(content, ...type.props);
 }

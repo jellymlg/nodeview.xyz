@@ -130,6 +130,8 @@ export async function GetNodeInfo(
 export interface TypeSettings {
   colors: string;
   icon: JSX.Element;
+  wrapper: (...props: any) => JSX.Element;
+  props: any[];
   text: string;
 }
 

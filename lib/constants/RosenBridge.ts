@@ -1,7 +1,7 @@
 import { ErgoTransactionOutput, IndexedErgoBox } from "../ergo-api";
 import { RustModule } from "../wasm";
 
-interface RosenBridgeTransferRequest {
+export interface RosenBridgeTransferRequest {
   toChain: string;
   toAddress: string;
   networkFee: string;
@@ -28,19 +28,19 @@ export function isRosenTransferRequest(
   } else return undefined;
 }
 
-interface RosenBridgeTransferPayment {
+export interface RosenBridgeTransferPayment {
   sourceTx: string;
   fromChain: string;
   toChain: string;
   fromAddress: string;
   toAddress: string;
-  amount: string;
-  bridgeFee: string;
-  networkFee: string;
+  amount: bigint;
+  bridgeFee: bigint;
+  networkFee: bigint;
   sourceToken: string;
   destinationToken: string;
   sourceBlockId: string;
-  sourceBlockHeight: string;
+  sourceBlockHeight: bigint;
 }
 
 export function isRosenPayment(
@@ -58,20 +58,21 @@ export function isRosenPayment(
       toChain: Buffer.from(R5Arr[2]).toString(),
       fromAddress: Buffer.from(R5Arr[3]).toString(),
       toAddress: Buffer.from(R5Arr[4]).toString(),
-      amount: Buffer.from(R5Arr[5]).toString(),
-      bridgeFee: Buffer.from(R5Arr[6]).toString(),
-      networkFee: Buffer.from(R5Arr[7]).toString(),
+      amount: new DataView(R5Arr[5].buffer).getBigUint64(0),
+      bridgeFee: new DataView(R5Arr[6].buffer).getBigUint64(0),
+      networkFee: new DataView(R5Arr[7].buffer).getBigUint64(0),
       sourceToken: Buffer.from(R5Arr[8]).toString(),
       destinationToken: Buffer.from(R5Arr[9]).toString(),
       sourceBlockId: Buffer.from(R5Arr[10]).toString(),
-      sourceBlockHeight: Buffer.from(R5Arr[11]).toString(),
+      sourceBlockHeight: new DataView(R5Arr[11].buffer).getBigUint64(0),
     };
   } else return undefined;
 }
 
-interface RosenBridgeCollateralOperation {
+export interface RosenBridgeCollateralOperation {
   type: string;
-  amount: number;
+  inAmount: number;
+  outAmount: number;
 }
 
 export function isRosenCollateral(
@@ -98,11 +99,16 @@ export function isRosenCollateral(
       .to_i64()
       .as_num();
     if (inAmount < outAmount) {
-      return { type: "Add collateral", amount: outAmount - inAmount };
+      return {
+        type: "Add collateral",
+        inAmount: inAmount,
+        outAmount: outAmount,
+      };
     } else {
       return {
         type: "Unlock partial collateral",
-        amount: inAmount - outAmount,
+        inAmount: inAmount,
+        outAmount: outAmount,
       };
     }
   }
@@ -113,7 +119,7 @@ export function isRosenCollateral(
     )
       .to_i64()
       .as_num();
-    return { type: "Unlock all collateral", amount: inAmount };
+    return { type: "Unlock all collateral", inAmount: inAmount, outAmount: 0 };
   }
   if (!inColl && outColl) {
     if (!outColl.additionalRegisters["R5"]) return undefined;
@@ -122,7 +128,7 @@ export function isRosenCollateral(
     )
       .to_i64()
       .as_num();
-    return { type: "Lock collateral", amount: outAmount };
+    return { type: "Lock collateral", inAmount: 0, outAmount: outAmount };
   }
   return undefined;
 }
