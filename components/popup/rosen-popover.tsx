@@ -15,13 +15,16 @@ import {
 import { Separator } from "../ui/separator";
 import Image from "next/image";
 import { ArrowRightIcon } from "lucide-react";
+import Link from "next/link";
 
 function RosenTransferPayment(x: RosenBridgeTransferPayment) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap w-full">
         <div className="w-1/4 flex content-center flex-wrap">Source tx:</div>
-        <div className="w-3/4 truncate">{x.sourceTx}</div>
+        <div className="w-3/4 truncate">
+          {ExplorerTx(x.sourceTx, x.fromChain)}
+        </div>
       </div>
       <Separator />
       <div className="flex flex-wrap w-full">
@@ -36,12 +39,16 @@ function RosenTransferPayment(x: RosenBridgeTransferPayment) {
       <Separator />
       <div className="flex flex-wrap w-full">
         <div className="w-1/4 flex content-center flex-wrap">From address:</div>
-        <div className="w-3/4 truncate">{x.fromAddress}</div>
+        <div className="w-3/4 truncate">
+          {ExplorerAddress(x.fromAddress, x.fromChain)}
+        </div>
       </div>
       <Separator />
       <div className="flex flex-wrap w-full">
         <div className="w-1/4 flex content-center flex-wrap">To address:</div>
-        <div className="w-3/4 truncate">{x.toAddress}</div>
+        <div className="w-3/4 truncate">
+          {ExplorerAddress(x.toAddress, x.toChain)}
+        </div>
       </div>
       <Separator />
       <div className="flex flex-wrap w-full">
@@ -61,31 +68,270 @@ function RosenTransferPayment(x: RosenBridgeTransferPayment) {
       <Separator />
       <div className="flex flex-wrap w-full">
         <div className="w-1/4 flex content-center flex-wrap">Source token:</div>
-        <div className="w-3/4 truncate">{x.sourceToken}</div>
+        <div className="w-3/4 truncate">
+          {ExplorerToken(x.sourceToken, x.fromChain)}
+        </div>
       </div>
       <Separator />
       <div className="flex flex-wrap w-full">
         <div className="w-1/4 flex content-center flex-wrap">
           Destination token:
         </div>
-        <div className="w-3/4 truncate">{x.destinationToken}</div>
+        <div className="w-3/4 truncate">
+          {ExplorerToken(x.destinationToken, x.toChain)}
+        </div>
       </div>
       <Separator />
       <div className="flex flex-wrap w-full">
         <div className="w-1/4 flex content-center flex-wrap">
           Source block id:
         </div>
-        <div className="w-3/4 truncate">{x.sourceBlockId}</div>
+        <div className="w-3/4 truncate">
+          {ExplorerBlockId(x.sourceBlockId, x.fromChain)}
+        </div>
       </div>
       <Separator />
       <div className="flex flex-wrap w-full">
         <div className="w-1/4 flex content-center flex-wrap">
           Source block height:
         </div>
-        <div className="w-3/4 truncate">{x.sourceBlockHeight}</div>
+        <div className="w-3/4 truncate">
+          {ExplorerBlockHeight(x.sourceBlockHeight, x.fromChain)}
+        </div>
       </div>
     </div>
   );
+}
+
+function ExplorerTx(id: string, chain: string): JSX.Element {
+  switch (chain) {
+    case "ergo":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"/tx?id=" + id}
+          target="_blank"
+        >
+          {id}
+        </Link>
+      );
+    case "cardano":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://cardanoscan.io/transaction/" + id}
+          target="_blank"
+        >
+          {id}
+        </Link>
+      );
+    case "ethereum":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://etherscan.io/tx/" + id}
+          target="_blank"
+        >
+          {id}
+        </Link>
+      );
+    case "bitcoin":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://www.blockchain.com/explorer/transactions/btc/" + id}
+          target="_blank"
+        >
+          {id}
+        </Link>
+      );
+    default:
+      return <p>{id}</p>;
+  }
+}
+
+function ExplorerAddress(addr: string, chain: string): JSX.Element {
+  switch (chain) {
+    case "ergo":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"/address?id=" + addr}
+          target="_blank"
+        >
+          {addr}
+        </Link>
+      );
+    case "cardano":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://cardanoscan.io/address/" + addr}
+          target="_blank"
+        >
+          {addr}
+        </Link>
+      );
+    case "ethereum":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://etherscan.io/address/" + addr}
+          target="_blank"
+        >
+          {addr}
+        </Link>
+      );
+    case "bitcoin":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={
+            "https://www.blockchain.com/explorer/transactions/btc/" +
+            addr.slice(4, -2)
+          }
+          target="_blank"
+        >
+          {addr.slice(4, -2)}
+        </Link>
+      );
+    default:
+      return <p>{addr}</p>;
+  }
+}
+
+function ExplorerBlockId(id: string, chain: string): JSX.Element {
+  switch (chain) {
+    case "ergo":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"/block?id=" + id}
+          target="_blank"
+        >
+          {id}
+        </Link>
+      );
+    case "cardano":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://adastat.net/blocks/" + id}
+          target="_blank"
+        >
+          {id}
+        </Link>
+      );
+    case "ethereum":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://etherscan.io/block/" + id}
+          target="_blank"
+        >
+          {id}
+        </Link>
+      );
+    case "bitcoin":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://www.blockchain.com/explorer/blocks/btc/" + id}
+          target="_blank"
+        >
+          {id}
+        </Link>
+      );
+    default:
+      return <p>{id}</p>;
+  }
+}
+
+function ExplorerBlockHeight(height: bigint, chain: string): JSX.Element {
+  switch (chain) {
+    case "ergo":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"/block?id=" + height}
+          target="_blank"
+        >
+          {height}
+        </Link>
+      );
+    case "cardano":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://cardanoscan.io/block/" + height}
+          target="_blank"
+        >
+          {height}
+        </Link>
+      );
+    case "ethereum":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://etherscan.io/block/" + height}
+          target="_blank"
+        >
+          {height}
+        </Link>
+      );
+    case "bitcoin":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://www.blockchain.com/explorer/blocks/btc/" + height}
+          target="_blank"
+        >
+          {height}
+        </Link>
+      );
+    default:
+      return <p>{height}</p>;
+  }
+}
+
+function ExplorerToken(id: string, chain: string): JSX.Element {
+  switch (chain) {
+    case "ergo":
+      return id == "erg" ? (
+        <p>{id}</p>
+      ) : (
+        <Link
+          className="text-primary hover:underline"
+          href={"/token?id=" + id}
+          target="_blank"
+        >
+          {id}
+        </Link>
+      );
+    case "cardano":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://cardanoscan.io/token/" + id}
+          target="_blank"
+        >
+          {id}
+        </Link>
+      );
+    case "ethereum":
+      return (
+        <Link
+          className="text-primary hover:underline"
+          href={"https://etherscan.io/token/" + id}
+          target="_blank"
+        >
+          {id}
+        </Link>
+      );
+    case "bitcoin": // no tokens on btc
+    default:
+      return <p>{id}</p>;
+  }
 }
 
 export function RosenPopover(
@@ -129,7 +375,12 @@ export function RosenPopover(
               <div className="w-1/4 flex content-center flex-wrap">
                 To address:
               </div>
-              <div className="w-3/4 truncate">{rosenTransfer.toAddress}</div>
+              <div className="w-3/4 truncate">
+                {ExplorerAddress(
+                  rosenTransfer.toAddress,
+                  rosenTransfer.toChain,
+                )}
+              </div>
             </div>
             <Separator />
             <div className="flex flex-wrap w-full">
@@ -150,7 +401,9 @@ export function RosenPopover(
               <div className="w-1/4 flex content-center flex-wrap">
                 From address:
               </div>
-              <div className="w-3/4 truncate">{rosenTransfer.fromAddress}</div>
+              <div className="w-3/4 truncate">
+                {ExplorerAddress(rosenTransfer.fromAddress, "ergo")}
+              </div>
             </div>
           </div>
         ) : (
