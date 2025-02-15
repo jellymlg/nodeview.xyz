@@ -1,3 +1,33 @@
+import { CFMMOrderParser, ErgoBoxStub, Order } from "./dex_parsers/Types";
+import { N2TOrdersV0Parser } from "./dex_parsers/v0/N2TOrdersV0Parser";
+import { T2TOrdersV0Parser } from "./dex_parsers/v0/T2TOrdersV0Parser";
+import { N2TOrdersV1Parser } from "./dex_parsers/v1/N2TOrdersV1Parser";
+import { T2TOrdersV1Parser } from "./dex_parsers/v1/T2TOrdersV1Parser";
+import { N2TOrdersV2Parser } from "./dex_parsers/v2/N2TOrdersV2Parser";
+import { T2TOrdersV2Parser } from "./dex_parsers/v2/T2TOrdersV2Parser";
+import { N2TOrdersV3Parser } from "./dex_parsers/v3/N2TOrdersV3Parser";
+import { T2TOrdersV3Parser } from "./dex_parsers/v3/T2TOrdersV3Parser";
+
+const CFMMParsers: CFMMOrderParser[] = [
+  new N2TOrdersV0Parser(),
+  new T2TOrdersV0Parser(),
+  new N2TOrdersV1Parser(),
+  new N2TOrdersV2Parser(),
+  new N2TOrdersV3Parser(),
+  new T2TOrdersV1Parser(),
+  new T2TOrdersV2Parser(),
+  new T2TOrdersV3Parser(),
+];
+
+export function ParseErgoDexOrder(box: ErgoBoxStub): Order | undefined {
+  return CFMMParsers.map(
+    (parser) =>
+      (parser.swap(box) ?? parser.deposit(box) ?? parser.redeem(box)) as
+        | Order
+        | undefined,
+  ).find((x) => x);
+}
+
 export const ErgoDexContractTemplates: Map<string, string> = new Map([
   // N2T
   [

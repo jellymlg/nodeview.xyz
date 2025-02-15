@@ -13,26 +13,30 @@ import { isSigmaUSDSwap } from "@/lib/constants/SigmaUSD";
 import { RosenPopover } from "../popup/rosen-popover";
 import { SigmaUSDPopover } from "../popup/sigusd-popover";
 import { ErgoDexPopover } from "../popup/ergodex-popover";
+import { ErgoBoxStub } from "@/lib/constants/dex_parsers/Types";
 
 function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
   // check ErgoDex contracts
-  const settledOrder = inputs
-    .map((x) => ErgoDexContractTemplates.get(templateFromBox(x)))
-    .find((x) => x);
-  const submittedOrder = outputs
-    .map((x) => ErgoDexContractTemplates.get(templateFromBox(x)))
-    .find((x) => x);
-  if (settledOrder || submittedOrder)
+  const settledOrder = inputs.find((x) =>
+    ErgoDexContractTemplates.has(templateFromBox(x)),
+  );
+  const submittedOrder = outputs.find((x) =>
+    ErgoDexContractTemplates.has(templateFromBox(x)),
+  );
+  if (settledOrder || submittedOrder) {
+    const order = new ErgoBoxStub(
+      (settledOrder ?? submittedOrder) as IndexedErgoBox,
+    );
+    const type: string = settledOrder ? "settled" : "submitted";
     return {
       colors:
         "bg-orange-700 border-orange-700 text-orange-700 dark:text-orange-400 fill-orange-700 dark:fill-orange-400 stroke-orange-700 dark:stroke-orange-400",
       icon: <ErgoDexIcon width={20} height={20} />,
       wrapper: ErgoDexPopover,
-      props: [settledOrder, submittedOrder],
-      text:
-        (settledOrder ?? submittedOrder) +
-        (settledOrder ? " settled" : " submitted"),
+      props: [order, type],
+      text: ErgoDexContractTemplates.get(order.template) + " " + type,
     };
+  }
   // check Rosen Bridge events
   const rosenTransfer = outputs.map(isRosenTransferRequest).find((x) => x);
   const rosenPayment = inputs.map(isRosenPayment).find((x) => x);

@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
+  Asset,
   ErgoApi,
   ErgoTransaction,
   ErgoTransactionOutput,
@@ -157,4 +158,11 @@ export function templateFromAddress(address: string): string {
       .to_ergo_tree()
       .template_bytes(),
   );
+}
+
+export function toAssetErg(amount: number): Asset {
+  return {
+    tokenId: "0000000000000000000000000000000000000000000000000000000000000000",
+    amount: amount,
+  };
 }

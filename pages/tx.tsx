@@ -66,8 +66,9 @@ export default function Transaction() {
                     const ids2: string[] = resp.data.outputs.flatMap((x) =>
                       x.assets?.map((y) => y.tokenId),
                     ) as string[];
+                    const dedupIds = [...new Set(ids1.concat(ids2))];
                     tokens.current = await NETWORK.API()
-                      .blockchain.getTokensByIds(ids1.concat(ids2))
+                      .blockchain.getTokensByIds(dedupIds)
                       .then((resp) => resp.data);
                     setLoading(false);
                     forceUpdate();
