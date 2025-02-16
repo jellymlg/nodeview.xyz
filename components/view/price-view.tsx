@@ -57,33 +57,44 @@ function RateFromOracleBox(box: ErgoTransactionOutput): number {
   }
 }
 
+async function Get30BoxesForRange(skip: number): Promise<IndexedErgoBox[]> {
+  return Promise.all(
+    [...Array(30)].map((e, i) =>
+      NETWORK.API()
+        .blockchain.getBoxesByTokenId(PoolTokenId, {
+          offset: i * skip,
+          limit: 1,
+        })
+        .then((resp) => resp.data.items![0]),
+    ),
+  );
+}
+
 const PoolTokenId =
   "8c27dd9d8a35aac1e3167d58858c0a8b4059b277da790552e37eba22df9b9035";
 
 export function PriceView() {
-  const [range, setRange] = useState<string>("720");
+  const [range, setRange] = useState<string>("day");
   const [data, setData] = useState<Data[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fun = async () => {
       setLoading(true);
-      const boxes = (await NETWORK.API()
-        .blockchain.getBoxesByTokenId(PoolTokenId, {
-          offset: 0,
-          limit: parseInt(range),
-        })
-        .then((resp) => resp.data.items)) as IndexedErgoBox[];
+      await RustModule.load();
+      const total = range == "day" ? 720 : range == "week" ? 5040 : 21600;
+      const skip = total / 30;
+      const boxes = await Get30BoxesForRange(skip);
       const temp: Data[] = Array<Data>(boxes.length);
       for (
         let i = 0, t = Date.now();
         i < temp.length;
-        i++, t -= 2 * 60 * 1000
+        i++, t -= 2 * 60 * 1000 * skip
       ) {
         const p = RateFromOracleBox(boxes[i]);
         temp[i] = {
           date: new Date(t - 2 * 60 * 1000).toString(),
-          price: isNaN(p) || p == 0 || p == Infinity ? temp[i - 1].price : p,
+          price: isNaN(p) || p == Infinity ? 0 : p,
         };
       }
       setData(temp.reverse());
@@ -107,10 +118,13 @@ export function PriceView() {
             <SelectValue placeholder="Last day" />
           </SelectTrigger>
           <SelectContent className="rounded-xl">
-            <SelectItem value="5040" className="rounded-lg">
+            <SelectItem value="month" className="rounded-lg">
+              Last Month
+            </SelectItem>
+            <SelectItem value="week" className="rounded-lg">
               Last week
             </SelectItem>
-            <SelectItem value="720" className="rounded-lg">
+            <SelectItem value="day" className="rounded-lg">
               Last day
             </SelectItem>
           </SelectContent>

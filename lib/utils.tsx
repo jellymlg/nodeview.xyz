@@ -95,6 +95,22 @@ export async function asIndexedTx(
   };
 }
 
+async function withTimeout<T>(millis: number, promise: Promise<T>): Promise<T> {
+  let timeoutPid: NodeJS.Timeout;
+  const timeout = new Promise<T>(
+    (resolve, reject) =>
+      (timeoutPid = setTimeout(
+        () => reject(`Timed out after ${millis} ms.`),
+        millis,
+      )),
+  );
+  return Promise.race([promise, timeout]).finally(() => {
+    if (timeoutPid) {
+      clearTimeout(timeoutPid);
+    }
+  });
+}
+
 export interface NodeInfo {
   index: number;
   status: boolean;
@@ -112,10 +128,13 @@ export async function GetNodeInfo(
   const api = new ErgoApi();
   api.baseUrl = address;
   const time1 = performance.now();
-  const tmp = await api.info
-    .getNodeInfo()
-    .then((resp) => resp.data)
-    .catch(() => undefined);
+  const tmp = await withTimeout(
+    1000,
+    api.info
+      .getNodeInfo()
+      .then((resp) => resp.data)
+      .catch(() => undefined),
+  ).catch(() => undefined);
   const time2 = performance.now();
   return {
     index: index,
