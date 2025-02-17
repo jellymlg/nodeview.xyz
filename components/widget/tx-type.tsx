@@ -1,7 +1,10 @@
 import { IndexedErgoBox } from "@/lib/ergo-api";
 import { ErgoDexIcon } from "./ergodex-icon";
 import { ArrowLeftRightIcon, PickaxeIcon } from "lucide-react";
-import { ErgoDexContractTemplates } from "@/lib/constants/ErgoDex";
+import {
+  ErgoDexAddresses,
+  ErgoDexContractTemplates,
+} from "@/lib/constants/ErgoDex";
 import { templateFromBox, TypeSettings } from "@/lib/utils";
 import {
   isRosenCollateral,
@@ -13,7 +16,6 @@ import { isSigmaUSDSwap } from "@/lib/constants/SigmaUSD";
 import { RosenPopover } from "../popup/rosen-popover";
 import { SigmaUSDPopover } from "../popup/sigusd-popover";
 import { ErgoDexPopover } from "../popup/ergodex-popover";
-import { ErgoBoxStub } from "@/lib/constants/dex_parsers/Types";
 
 function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
   // check ErgoDex contracts
@@ -23,18 +25,29 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
   const submittedOrder = outputs.find((x) =>
     ErgoDexContractTemplates.has(templateFromBox(x)),
   );
-  if (settledOrder || submittedOrder) {
-    const order = new ErgoBoxStub(
-      (settledOrder ?? submittedOrder) as IndexedErgoBox,
-    );
-    const type: string = settledOrder ? "settled" : "submitted";
+  const poolActionIn = inputs.find((x) => ErgoDexAddresses.has(x.address));
+  const poolActionOut = outputs.find((x) => ErgoDexAddresses.has(x.address));
+  if (
+    settledOrder ||
+    submittedOrder ||
+    (poolActionIn &&
+      poolActionOut &&
+      ErgoDexAddresses.get(poolActionIn.address) ==
+        ErgoDexAddresses.get(poolActionOut.address))
+  ) {
+    const txt: string =
+      settledOrder || submittedOrder
+        ? ErgoDexContractTemplates.get(
+            templateFromBox(settledOrder ?? submittedOrder!),
+          ) + (settledOrder ? " settled" : " submitted")
+        : ErgoDexAddresses.get(poolActionIn!.address)!;
     return {
       colors:
         "bg-orange-700 border-orange-700 text-orange-700 dark:text-orange-400 fill-orange-700 dark:fill-orange-400 stroke-orange-700 dark:stroke-orange-400",
       icon: <ErgoDexIcon width={20} height={20} />,
       wrapper: ErgoDexPopover,
-      props: [order, type],
-      text: ErgoDexContractTemplates.get(order.template) + " " + type,
+      props: [settledOrder, submittedOrder, poolActionIn, poolActionOut, txt],
+      text: txt,
     };
   }
   // check Rosen Bridge events

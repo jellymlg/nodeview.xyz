@@ -1,6 +1,11 @@
 import { Asset, IndexedErgoBox } from "@/lib/ergo-api";
-import { MainNetAddressFromErgoTree, templateFromBox } from "@/lib/utils";
+import {
+  MainNetAddressFromErgoTree,
+  templateFromBox,
+  toAssetErg,
+} from "@/lib/utils";
 import { RustModule } from "@/lib/wasm";
+import { ErgoDexAddresses } from "../ErgoDex";
 
 export const MINER_FEE = 2_000_000;
 export const SPF =
@@ -33,6 +38,74 @@ export abstract class Order {
   }
   toString(): string {
     return "Order[type=" + this.typeName() + ",id=" + this.id + "]";
+  }
+}
+
+export class CFMMPool {
+  poolId: string;
+  lp: Asset;
+  x: Asset;
+  y: Asset;
+  feeNum: number;
+  constructor(poolId: string, lp: Asset, x: Asset, y: Asset, feeNum: number) {
+    this.poolId = poolId;
+    this.lp = lp;
+    this.x = x;
+    this.y = y;
+    this.feeNum = feeNum;
+  }
+  static fromBox(box: IndexedErgoBox): CFMMPool | undefined {
+    if (ErgoDexAddresses.get(box.address) == "N2T Swap") {
+      const nft = box.assets![0];
+      const lp = box.assets![1];
+      const y = box.assets![2];
+      const fee = RustModule.SigmaRust.Constant.decode_from_base16(
+        box.additionalRegisters["R4"],
+      ).to_i32();
+      if (nft && lp && y && fee)
+        return new CFMMPool(nft.tokenId, lp, toAssetErg(box.value), y, fee);
+    }
+    if (ErgoDexAddresses.get(box.address) == "T2T Swap") {
+      const nft = box.assets![0];
+      const lp = box.assets![1];
+      const x = box.assets![2];
+      const y = box.assets![3];
+      const fee = RustModule.SigmaRust.Constant.decode_from_base16(
+        box.additionalRegisters["R4"],
+      ).to_i32();
+      if (nft && lp && x && y && fee)
+        return new CFMMPool(nft.tokenId, lp, x, y, fee);
+    }
+    return undefined;
+  }
+}
+
+export class CFMMPoolAction {
+  poolBefore: CFMMPool;
+  poolAfter: CFMMPool;
+  constructor(poolBefore: CFMMPool, poolAfter: CFMMPool) {
+    this.poolBefore = poolBefore;
+    this.poolAfter = poolAfter;
+  }
+  listProperties(): [string, string][] {
+    const inX = this.poolBefore.x.amount;
+    const inY = this.poolBefore.y.amount;
+    const outX = this.poolAfter.x.amount;
+    const outY = this.poolAfter.y.amount;
+    const idX = this.poolAfter.x.tokenId;
+    const idY = this.poolAfter.y.tokenId;
+    return [
+      ["Pool id", this.poolBefore.poolId],
+      [
+        "Input",
+        inX > outX ? outY - inY + " of " + idY : outX - inX + " of " + idX,
+      ],
+      [
+        "Output",
+        inX > outX ? inX - outX + " of " + idX : inY - outY + " of " + idY,
+      ],
+      ["Fee", (1000 - this.poolBefore.feeNum) / 10 + " %"],
+    ];
   }
 }
 

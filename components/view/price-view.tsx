@@ -119,7 +119,7 @@ export function PriceView() {
           </SelectTrigger>
           <SelectContent className="rounded-xl">
             <SelectItem value="month" className="rounded-lg">
-              Last Month
+              Last month
             </SelectItem>
             <SelectItem value="week" className="rounded-lg">
               Last week
