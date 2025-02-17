@@ -25,8 +25,12 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
   const submittedOrder = outputs.find((x) =>
     ErgoDexContractTemplates.has(templateFromBox(x)),
   );
-  const poolActionIn = inputs.find((x) => ErgoDexAddresses.has(x.address));
-  const poolActionOut = outputs.find((x) => ErgoDexAddresses.has(x.address));
+  const poolActionIn = inputs.find((x) =>
+    ErgoDexAddresses.get(x.address)?.includes("Swap"),
+  );
+  const poolActionOut = outputs.find((x) =>
+    ErgoDexAddresses.get(x.address)?.includes("Swap"),
+  );
   if (
     settledOrder ||
     submittedOrder ||
