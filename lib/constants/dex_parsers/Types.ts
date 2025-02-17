@@ -96,14 +96,8 @@ export class CFMMPoolAction {
     const idY = this.poolAfter.y.tokenId;
     return [
       ["Pool id", this.poolBefore.poolId],
-      [
-        "Input",
-        inX > outX ? outY - inY + " of " + idY : outX - inX + " of " + idX,
-      ],
-      [
-        "Output",
-        inX > outX ? inX - outX + " of " + idX : inY - outY + " of " + idY,
-      ],
+      ["Input", inX > outX ? outY - inY + ";" + idY : outX - inX + ";" + idX],
+      ["Output", inX > outX ? inX - outX + ";" + idX : inY - outY + ";" + idY],
       ["Fee", (1000 - this.poolBefore.feeNum) / 10 + " %"],
     ];
   }
@@ -182,8 +176,8 @@ export class Deposit extends Order {
   }
   listProperties(): [string, string][] {
     return super.listProperties().concat([
-      ["Input X", this.inX.amount + " of " + this.inX.tokenId],
-      ["Input Y", this.inY.amount + " of " + this.inY.tokenId],
+      ["Input X", this.inX.amount + ";" + this.inX.tokenId],
+      ["Input Y", this.inY.amount + ";" + this.inY.tokenId],
       ["Dex fee", "" + this.dexFee],
     ]);
   }
@@ -223,7 +217,7 @@ export class Redeem extends Order {
   }
   listProperties(): [string, string][] {
     return super.listProperties().concat([
-      ["Liquidity", this.lp.amount + " of " + this.lp.tokenId],
+      ["Liquidity", this.lp.amount + ";" + this.lp.tokenId],
       ["Dex fee", "" + this.dexFee],
     ]);
   }
@@ -269,10 +263,10 @@ export class Swap extends Order {
   }
   listProperties(): [string, string][] {
     return super.listProperties().concat([
-      ["Input", this.baseAmount.amount + " of " + this.baseAmount.tokenId],
+      ["Input", this.baseAmount.amount + ";" + this.baseAmount.tokenId],
       [
         "Output",
-        this.minQuoteAmount.amount + " of " + this.minQuoteAmount.tokenId,
+        this.minQuoteAmount.amount + ";" + this.minQuoteAmount.tokenId,
       ],
       ["Fee/token enumerator", "" + this.dexFeePerTokenNum],
       ["Fee/token denominator", "" + this.dexFeePerTokenDenom],
