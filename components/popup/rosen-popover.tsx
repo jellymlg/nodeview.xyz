@@ -103,48 +103,33 @@ function RosenTransferPayment(x: RosenBridgeTransferPayment) {
   );
 }
 
+function MakeLink(baseUrl: string, param: string | bigint): JSX.Element {
+  return (
+    <Link
+      className="text-primary hover:underline"
+      href={baseUrl + param}
+      target="_blank"
+    >
+      {param}
+    </Link>
+  );
+}
+
 function ExplorerTx(id: string, chain: string): JSX.Element {
   switch (chain) {
     case "ergo":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"/tx?id=" + id}
-          target="_blank"
-        >
-          {id}
-        </Link>
-      );
+      return MakeLink("/tx?id=", id);
     case "cardano":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://cardanoscan.io/transaction/" + id}
-          target="_blank"
-        >
-          {id}
-        </Link>
-      );
+      return MakeLink("https://cardanoscan.io/transaction/", id);
     case "ethereum":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://etherscan.io/tx/" + id}
-          target="_blank"
-        >
-          {id}
-        </Link>
-      );
+      return MakeLink("https://etherscan.io/tx/", id);
     case "bitcoin":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://www.blockchain.com/explorer/transactions/btc/" + id}
-          target="_blank"
-        >
-          {id}
-        </Link>
+      return MakeLink(
+        "https://www.blockchain.com/explorer/transactions/btc/",
+        id,
       );
+    case "binance":
+      return MakeLink("https://bscscan.com/tx/", id);
     default:
       return <p>{id}</p>;
   }
@@ -153,48 +138,18 @@ function ExplorerTx(id: string, chain: string): JSX.Element {
 function ExplorerAddress(addr: string, chain: string): JSX.Element {
   switch (chain) {
     case "ergo":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"/address?id=" + addr}
-          target="_blank"
-        >
-          {addr}
-        </Link>
-      );
+      return MakeLink("/address?id=", addr);
     case "cardano":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://cardanoscan.io/address/" + addr}
-          target="_blank"
-        >
-          {addr}
-        </Link>
-      );
+      return MakeLink("https://cardanoscan.io/address/", addr);
     case "ethereum":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://etherscan.io/address/" + addr}
-          target="_blank"
-        >
-          {addr}
-        </Link>
-      );
+      return MakeLink("https://etherscan.io/address/", addr);
     case "bitcoin":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={
-            "https://www.blockchain.com/explorer/transactions/btc/" +
-            addr.slice(4, -2)
-          }
-          target="_blank"
-        >
-          {addr.slice(4, -2)}
-        </Link>
+      return MakeLink(
+        "https://www.blockchain.com/explorer/transactions/btc/",
+        addr.slice(4, -2),
       );
+    case "binance":
+      return MakeLink("https://bscscan.com/address/", addr);
     default:
       return <p>{addr}</p>;
   }
@@ -203,45 +158,15 @@ function ExplorerAddress(addr: string, chain: string): JSX.Element {
 function ExplorerBlockId(id: string, chain: string): JSX.Element {
   switch (chain) {
     case "ergo":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"/block?id=" + id}
-          target="_blank"
-        >
-          {id}
-        </Link>
-      );
+      return MakeLink("/block?id=", id);
     case "cardano":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://adastat.net/blocks/" + id}
-          target="_blank"
-        >
-          {id}
-        </Link>
-      );
+      return MakeLink("https://adastat.net/blocks/", id);
     case "ethereum":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://etherscan.io/block/" + id}
-          target="_blank"
-        >
-          {id}
-        </Link>
-      );
+      return MakeLink("https://etherscan.io/block/", id);
     case "bitcoin":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://www.blockchain.com/explorer/blocks/btc/" + id}
-          target="_blank"
-        >
-          {id}
-        </Link>
-      );
+      return MakeLink("https://www.blockchain.com/explorer/blocks/btc/", id);
+    case "binance":
+      return MakeLink("https://bscscan.com/block/", id);
     default:
       return <p>{id}</p>;
   }
@@ -250,45 +175,18 @@ function ExplorerBlockId(id: string, chain: string): JSX.Element {
 function ExplorerBlockHeight(height: bigint, chain: string): JSX.Element {
   switch (chain) {
     case "ergo":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"/block?id=" + height}
-          target="_blank"
-        >
-          {height}
-        </Link>
-      );
+      return MakeLink("/block?id=", height); // TODO
     case "cardano":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://cardanoscan.io/block/" + height}
-          target="_blank"
-        >
-          {height}
-        </Link>
-      );
+      return MakeLink("https://cardanoscan.io/block/", height);
     case "ethereum":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://etherscan.io/block/" + height}
-          target="_blank"
-        >
-          {height}
-        </Link>
-      );
+      return MakeLink("https://etherscan.io/block/", height);
     case "bitcoin":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://www.blockchain.com/explorer/blocks/btc/" + height}
-          target="_blank"
-        >
-          {height}
-        </Link>
+      return MakeLink(
+        "https://www.blockchain.com/explorer/blocks/btc/",
+        height,
       );
+    case "binance":
+      return MakeLink("https://bscscan.com/block/", height);
     default:
       return <p>{height}</p>;
   }
@@ -297,38 +195,27 @@ function ExplorerBlockHeight(height: bigint, chain: string): JSX.Element {
 function ExplorerToken(id: string, chain: string): JSX.Element {
   switch (chain) {
     case "ergo":
-      return id == "erg" ? (
+      return id == "erg" ? <p>{id}</p> : MakeLink("/token?id=", id);
+    case "cardano":
+      return id == "ada" ? (
         <p>{id}</p>
       ) : (
-        <Link
-          className="text-primary hover:underline"
-          href={"/token?id=" + id}
-          target="_blank"
-        >
-          {id}
-        </Link>
-      );
-    case "cardano":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://cardanoscan.io/token/" + id}
-          target="_blank"
-        >
-          {id}
-        </Link>
+        MakeLink("https://cardanoscan.io/token/", id)
       );
     case "ethereum":
-      return (
-        <Link
-          className="text-primary hover:underline"
-          href={"https://etherscan.io/token/" + id}
-          target="_blank"
-        >
-          {id}
-        </Link>
+      return id == "eth" ? (
+        <p>{id}</p>
+      ) : (
+        MakeLink("https://etherscan.io/token/", id)
       );
-    case "bitcoin": // no tokens on btc
+    case "bitcoin":
+      return <p>{id}</p>;
+    case "binance":
+      return id == "bnb" ? (
+        <p>{id}</p>
+      ) : (
+        MakeLink("https://bscscan.com/token/", id)
+      );
     default:
       return <p>{id}</p>;
   }

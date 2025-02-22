@@ -10,21 +10,29 @@ export default function Block() {
   const id: string = useSearchParams().get("id") as string;
   const [block, setBlock] = useState<FullBlock>();
   const [loading, setLoading] = useState<boolean>(true);
+  const GetBlockById: (x: string) => void = (blockId) =>
+    NETWORK.API()
+      .blocks.getFullBlockById(blockId)
+      .then(
+        (resp) => {
+          setBlock(resp.data);
+          setLoading(false);
+        },
+        () => setLoading(false),
+      );
   useEffect(() => {
     document.title = "NodeView | Block";
     if (!id) return;
     const fun = async () => {
       setLoading(true);
       await RustModule.load();
-      NETWORK.API()
-        .blocks.getFullBlockById(id)
-        .then(
-          (resp) => {
-            setBlock(resp.data);
-            setLoading(false);
-          },
-          () => setLoading(false),
-        );
+      if (id.length == 64) {
+        GetBlockById(id);
+      } else {
+        NETWORK.API()
+          .blocks.getFullBlockAt(parseInt(id))
+          .then((resp) => GetBlockById(resp.data[0]));
+      }
     };
     fun();
   }, [id]);
