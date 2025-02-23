@@ -175,7 +175,7 @@ function ExplorerBlockId(id: string, chain: string): JSX.Element {
 function ExplorerBlockHeight(height: bigint, chain: string): JSX.Element {
   switch (chain) {
     case "ergo":
-      return MakeLink("/block?id=", height); // TODO
+      return MakeLink("/block?id=", height);
     case "cardano":
       return MakeLink("https://cardanoscan.io/block/", height);
     case "ethereum":

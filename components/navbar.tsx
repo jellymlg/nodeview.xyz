@@ -53,7 +53,7 @@ async function lookup(str: string) {
     window.location.href = "/block?id=" + str;
     return;
   }
-  window.location.href = "/nothing";
+  window.location.href = "/404";
 }
 
 export function Navbar() {
