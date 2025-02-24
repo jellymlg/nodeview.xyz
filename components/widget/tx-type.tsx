@@ -5,7 +5,7 @@ import {
   ErgoDexAddresses,
   ErgoDexContractTemplates,
 } from "@/lib/constants/ErgoDex";
-import { templateFromBox, TypeSettings } from "@/lib/utils";
+import { isMewFinanceOrder, templateFromBox, TypeSettings } from "@/lib/utils";
 import {
   isRosenCollateral,
   isRosenPayment,
@@ -45,10 +45,22 @@ function deduceType({ inputs, outputs }: TxTypeProps): TypeSettings {
             templateFromBox(settledOrder ?? submittedOrder!),
           ) + (settledOrder ? " settled" : " submitted")
         : ErgoDexAddresses.get(poolActionIn!.address)!;
+    const isMewFinance = isMewFinanceOrder(settledOrder, submittedOrder);
     return {
-      colors:
-        "bg-orange-700 border-orange-700 text-orange-700 dark:text-orange-400 fill-orange-700 dark:fill-orange-400 stroke-orange-700 dark:stroke-orange-400",
-      icon: <ErgoDexIcon width={20} height={20} />,
+      colors: isMewFinance
+        ? "bg-purple-600 border-purple-600 text-purple-200"
+        : "bg-orange-700 border-orange-700 text-orange-700 dark:text-orange-400 fill-orange-700 dark:fill-orange-400 stroke-orange-700 dark:stroke-orange-400",
+      icon: isMewFinance ? (
+        <Image
+          priority={true}
+          width={20}
+          height={20}
+          src={"mew.svg"}
+          alt={"mew logo"}
+        />
+      ) : (
+        <ErgoDexIcon width={20} height={20} />
+      ),
       wrapper: ErgoDexPopover,
       props: [settledOrder, submittedOrder, poolActionIn, poolActionOut, txt],
       text: txt,

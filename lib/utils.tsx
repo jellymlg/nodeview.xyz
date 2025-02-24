@@ -185,3 +185,16 @@ export function toAssetErg(amount: number): Asset {
     amount: amount,
   };
 }
+
+export function isMewFinanceOrder(
+  settledOrder: IndexedErgoBox | undefined,
+  submittedOrder: IndexedErgoBox | undefined,
+): boolean {
+  const order = settledOrder ?? submittedOrder;
+  const R4 = order ? order.additionalRegisters["R4"] : undefined;
+  return R4
+    ? Buffer.from(
+        RustModule.SigmaRust.Constant.decode_from_base16(R4).to_byte_array(),
+      ).toString() == "Mew"
+    : false;
+}

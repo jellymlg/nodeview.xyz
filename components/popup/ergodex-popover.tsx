@@ -20,6 +20,7 @@ import { NETWORK } from "@/lib/network";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Image from "next/image";
 import Link from "next/link";
+import { isMewFinanceOrder } from "@/lib/utils";
 
 function MakeTokenRow(
   amountWithId: string,
@@ -85,6 +86,7 @@ export function ErgoDexPopover(
     settledOrder || submittedOrder
       ? ParseErgoDexOrder(new ErgoBoxStub((settledOrder ?? submittedOrder)!))
       : undefined;
+  const isMewFinance = isMewFinanceOrder(settledOrder, submittedOrder);
   const props = order
     ? order.listProperties()
     : new CFMMPoolAction(
@@ -115,14 +117,27 @@ export function ErgoDexPopover(
       </DialogTrigger>
       <DialogContent className="w-1/2 max-h-[100%] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <ErgoDexIcon
-              width={30}
-              height={30}
-              className="mr-2 fill-orange-700 stroke-orange-700 dark:fill-orange-400 dark:stroke-orange-400"
-            />
-            ErgoDex operation overview
-          </DialogTitle>
+          {isMewFinance ? (
+            <DialogTitle className="flex items-center">
+              <Image
+                width={30}
+                height={30}
+                className="mr-2"
+                src={"mew.svg"}
+                alt={"mew logo"}
+              />
+              Mew Finance operation overview
+            </DialogTitle>
+          ) : (
+            <DialogTitle className="flex items-center">
+              <ErgoDexIcon
+                width={30}
+                height={30}
+                className="mr-2 fill-orange-700 stroke-orange-700 dark:fill-orange-400 dark:stroke-orange-400"
+              />
+              ErgoDex operation overview
+            </DialogTitle>
+          )}
           <DialogDescription>
             {text + (order ? "    (" + order.typeName() + ")" : "")}
           </DialogDescription>
